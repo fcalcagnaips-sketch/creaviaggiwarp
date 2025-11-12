@@ -16,18 +16,7 @@
     <!-- Modern Style -->
     <link rel="stylesheet" href="css/modern-style.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        /* Stili specifici per risultati voli mantenuti */
 
         .container {
             max-width: 1000px;
@@ -480,13 +469,38 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>✈️ Ricerca Voli</h1>
-            <p>Trova i migliori voli con le API Amadeus</p>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-plane-departure"></i>
+                CreaViaggi
+            </a>
+            
+            <button class="navbar-toggle" id="navbarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index.html" class="navbar-link active"><i class="fas fa-search"></i> Cerca Voli</a></li>
+                <li><a href="hotels.html" class="navbar-link"><i class="fas fa-hotel"></i> Hotel</a></li>
+                <li><a href="organizza_viaggi.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacchetti</a></li>
+                <li><a href="info.html" class="navbar-link"><i class="fas fa-info-circle"></i> Info</a></li>
+            </ul>
         </div>
+    </nav>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Trova Il Tuo Volo Perfetto</h1>
+                <p class="hero-subtitle">Confronta milioni di voli e prenota al miglior prezzo con CreaViaggi</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
         <!-- Search Form -->
         <div class="search-card">
             <form id="flightSearchForm" class="search-form">
@@ -1212,6 +1226,11 @@
         // Initialize app when page loads
         document.addEventListener('DOMContentLoaded', () => {
             window.flightApp = new FlightSearchApp();
+            
+            // Mobile navbar toggle
+            document.getElementById('navbarToggle')?.addEventListener('click', () => {
+                document.getElementById('navbarMenu').classList.toggle('active');
+            });
         });
     </script>
 </body>

@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✈️ Dettaglio Viaggio - CreaViaggi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Modern Style -->
+    <link rel="stylesheet" href="css/modern-style.css">
+    <!--
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        /* Stili inline commentati per usare modern-style.css */
 
         .container {
             max-width: 1000px;
@@ -249,14 +248,42 @@
             }
         }
     </style>
+    -->
 </head>
 <body>
-    <div class="container">
-        <a href="organizza_viaggi.html" class="back-button">
-            <i class="fas fa-arrow-left"></i> Torna alla Ricerca
-        </a>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-plane-departure"></i>
+                CreaViaggi
+            </a>
+            
+            <button class="navbar-toggle" id="navbarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index.html" class="navbar-link"><i class="fas fa-search"></i> Cerca Voli</a></li>
+                <li><a href="hotels.html" class="navbar-link"><i class="fas fa-hotel"></i> Hotel</a></li>
+                <li><a href="organizza_viaggi.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacchetti</a></li>
+                <li><a href="info.html" class="navbar-link"><i class="fas fa-info-circle"></i> Info</a></li>
+            </ul>
+        </div>
+    </nav>
 
-        <div class="detail-card">
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">✈️ Dettagli del Tuo Viaggio</h1>
+                <p class="hero-subtitle">Riepilogo completo del pacchetto selezionato</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="card" style="padding: var(--space-8); margin-bottom: var(--space-8);">
             <div class="trip-title">
                 <span class="icon">✈️</span>
                 <h1 id="tripDestination">Caricamento...</h1>
@@ -501,16 +528,16 @@
                 const taxiUrl = `https://www.uber.com/global/en/cities/${trip.destination.city.toLowerCase()}/`;
 
                 document.getElementById('bookingButtons').innerHTML = `
-                    <button onclick="window.tripDetailApp.downloadPDF()" class="booking-btn pdf">
+                    <button onclick="window.tripDetailApp.downloadPDF()" class="btn btn-accent btn-lg" style="background: var(--accent-500);">
                         <i class="fas fa-download"></i> Scarica PDF
                     </button>
-                    <a href="${skyscannerUrl}" target="_blank" class="booking-btn flight">
+                    <a href="${skyscannerUrl}" target="_blank" class="btn btn-primary btn-lg">
                         <i class="fas fa-plane"></i> Prenota Volo
                     </a>
-                    <a href="${bookingUrl}" target="_blank" class="booking-btn hotel">
+                    <a href="${bookingUrl}" target="_blank" class="btn btn-secondary btn-lg">
                         <i class="fas fa-hotel"></i> Prenota Hotel
                     </a>
-                    <a href="${taxiUrl}" target="_blank" class="booking-btn taxi">
+                    <a href="${taxiUrl}" target="_blank" class="btn btn-outline btn-lg">
                         <i class="fas fa-taxi"></i> Prenota Taxi
                     </a>
                 `;
@@ -642,6 +669,11 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             window.tripDetailApp = new TripDetailApp();
+            
+            // Mobile navbar toggle
+            document.getElementById('navbarToggle')?.addEventListener('click', () => {
+                document.getElementById('navbarMenu').classList.toggle('active');
+            });
         });
     </script>
 </body>

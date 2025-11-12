@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreaViaggi - Organizza il Tuo Viaggio Perfetto</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Modern Style -->
+    <link rel="stylesheet" href="css/modern-style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index-new.html" class="navbar-brand">
+                <i class="fas fa-plane-departure"></i>
+                CreaViaggi
+            </a>
+            
+            <button class="navbar-toggle" id="navbarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index-new.html" class="navbar-link active"><i class="fas fa-search"></i> Cerca Voli</a></li>
+                <li><a href="hotels.html" class="navbar-link"><i class="fas fa-hotel"></i> Hotel</a></li>
+                <li><a href="organizza_viaggi.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacchetti</a></li>
+                <li><a href="info.html" class="navbar-link"><i class="fas fa-info-circle"></i> Info</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Trova Il Tuo Volo Perfetto</h1>
+                <p class="hero-subtitle">Confronta milioni di voli e prenota al miglior prezzo con CreaViaggi</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Card -->
+    <div class="container">
+        <div class="search-card">
+            <div class="search-card-header">
+                <h2 class="search-card-title">Cerca Voli</h2>
+                <p class="search-card-description">Inserisci i dettagli del tuo viaggio per trovare le migliori offerte</p>
+            </div>
+
+            <form id="flightSearchForm">
+                <!-- Origin and Destination -->
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label input-label-required">Partenza</label>
+                        <input type="text" class="input-field" id="departureAirport" placeholder="Roma FCO" autocomplete="off">
+                        <div id="departureAutocomplete" class="autocomplete-list hidden"></div>
+                        <input type="hidden" id="departureCode">
+                        <span class="input-hint">Città o codice aeroporto</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label input-label-required">Arrivo</label>
+                        <input type="text" class="input-field" id="arrivalAirport" placeholder="Parigi CDG" autocomplete="off">
+                        <div id="arrivalAutocomplete" class="autocomplete-list hidden"></div>
+                        <input type="hidden" id="arrivalCode">
+                        <span class="input-hint">Città o codice aeroporto</span>
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label input-label-required">Data Partenza</label>
+                        <input type="date" class="input-field" id="departureDate" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Data Ritorno</label>
+                        <input type="date" class="input-field" id="returnDate">
+                        <span class="input-hint">Lascia vuoto per solo andata</span>
+                    </div>
+                </div>
+
+                <!-- Passengers and Class -->
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label input-label-required">Passeggeri</label>
+                        <input type="number" class="input-field" id="passengers" min="1" max="9" value="1" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Classe</label>
+                        <select class="input-select" id="travelClass">
+                            <option value="ECONOMY">Economy</option>
+                            <option value="PREMIUM_ECONOMY">Premium Economy</option>
+                            <option value="BUSINESS">Business</option>
+                            <option value="FIRST">First Class</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <button type="submit" class="btn btn-primary btn-lg btn-full">
+                    <i class="fas fa-search"></i>
+                    Cerca Voli
+                </button>
+            </form>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="card hidden" style="margin-top: 2rem;">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p class="loading-text">Ricerca voli in corso...</p>
+                <p style="color: var(--gray-500); font-size: var(--text-sm);">Stiamo cercando le migliori offerte per te</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="hidden" style="margin-top: 3rem; margin-bottom: 3rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="color: var(--gray-900); margin-bottom: 1rem;">Voli Disponibili</h2>
+                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <span class="badge badge-primary" id="routeInfo"></span>
+                    <span class="badge badge-primary" id="dateInfo"></span>
+                    <span class="badge badge-primary" id="passengersInfo"></span>
+                </div>
+            </div>
+
+            <!-- Demo Results -->
+            <div class="grid gap-6" id="flightsContainer">
+                <!-- Trip Card Example 1 -->
+                <div class="trip-card fade-in">
+                    <div class="trip-card-header">
+                        <div class="trip-destination">
+                            <div class="trip-destination-icon">
+                                ✈️
+                            </div>
+                            <div>
+                                <h3 class="trip-destination-name">Roma → Parigi</h3>
+                                <p style="color: var(--gray-600); font-size: var(--text-sm); margin: 0;">Volo diretto</p>
+                            </div>
+                        </div>
+                        <div class="trip-price">
+                            <div class="trip-price-label">Da</div>
+                            <div class="trip-price-amount">€89</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-card-body">
+                        <div class="trip-details">
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-clock"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Durata</span>
+                                    <span class="trip-detail-value">2h 15m</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-plane-departure"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Partenza</span>
+                                    <span class="trip-detail-value">10:30</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-plane-arrival"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Arrivo</span>
+                                    <span class="trip-detail-value">12:45</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-chair"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Posti</span>
+                                    <span class="trip-detail-value">9 disponibili</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trip-card-footer">
+                        <button class="btn btn-outline btn-full">
+                            <i class="fas fa-info-circle"></i>
+                            Dettagli
+                        </button>
+                        <button class="btn btn-accent btn-full">
+                            <i class="fas fa-shopping-cart"></i>
+                            Prenota Ora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trip Card Example 2 -->
+                <div class="trip-card fade-in" style="animation-delay: 0.1s;">
+                    <div class="trip-card-header">
+                        <div class="trip-destination">
+                            <div class="trip-destination-icon">
+                                ✈️
+                            </div>
+                            <div>
+                                <h3 class="trip-destination-name">Milano → Londra</h3>
+                                <p style="color: var(--gray-600); font-size: var(--text-sm); margin: 0;">1 scalo</p>
+                            </div>
+                        </div>
+                        <div class="trip-price">
+                            <div class="trip-price-label">Da</div>
+                            <div class="trip-price-amount">€125</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-card-body">
+                        <div class="trip-details">
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-clock"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Durata</span>
+                                    <span class="trip-detail-value">4h 30m</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-plane-departure"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Partenza</span>
+                                    <span class="trip-detail-value">14:00</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-plane-arrival"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Arrivo</span>
+                                    <span class="trip-detail-value">18:30</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-chair"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Posti</span>
+                                    <span class="trip-detail-value">5 disponibili</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trip-card-footer">
+                        <button class="btn btn-outline btn-full">
+                            <i class="fas fa-info-circle"></i>
+                            Dettagli
+                        </button>
+                        <button class="btn btn-accent btn-full">
+                            <i class="fas fa-shopping-cart"></i>
+                            Prenota Ora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trip Card Example 3 -->
+                <div class="trip-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="trip-card-header">
+                        <div class="trip-destination">
+                            <div class="trip-destination-icon">
+                                ✈️
+                            </div>
+                            <div>
+                                <h3 class="trip-destination-name">Napoli → Madrid</h3>
+                                <p style="color: var(--gray-600); font-size: var(--text-sm); margin: 0;">Volo diretto</p>
+                            </div>
+                        </div>
+                        <div class="trip-price">
+                            <div class="trip-price-label">Da</div>
+                            <div class="trip-price-amount">€79</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-card-body">
+                        <div class="trip-details">
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-clock"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Durata</span>
+                                    <span class="trip-detail-value">2h 45m</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-plane-departure"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Partenza</span>
+                                    <span class="trip-detail-value">08:00</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-plane-arrival"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Arrivo</span>
+                                    <span class="trip-detail-value">10:45</span>
+                                </div>
+                            </div>
+
+                            <div class="trip-detail-item">
+                                <i class="trip-detail-icon fas fa-chair"></i>
+                                <div class="trip-detail-content">
+                                    <span class="trip-detail-label">Posti</span>
+                                    <span class="trip-detail-value">12 disponibili</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trip-card-footer">
+                        <button class="btn btn-outline btn-full">
+                            <i class="fas fa-info-circle"></i>
+                            Dettagli
+                        </button>
+                        <button class="btn btn-accent btn-full">
+                            <i class="fas fa-shopping-cart"></i>
+                            Prenota Ora
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: var(--gray-900); color: white; padding: var(--space-12) 0; margin-top: var(--space-16);">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-8);">
+                <div>
+                    <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-4);">CreaViaggi</h3>
+                    <p style="color: var(--gray-400); font-size: var(--text-sm);">La tua piattaforma per organizzare viaggi indimenticabili</p>
+                </div>
+                
+                <div>
+                    <h4 style="font-size: var(--text-base); margin-bottom: var(--space-3);">Link Rapidi</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--space-2);"><a href="#" style="color: var(--gray-400); font-size: var(--text-sm);">Voli</a></li>
+                        <li style="margin-bottom: var(--space-2);"><a href="#" style="color: var(--gray-400); font-size: var(--text-sm);">Hotel</a></li>
+                        <li style="margin-bottom: var(--space-2);"><a href="#" style="color: var(--gray-400); font-size: var(--text-sm);">Pacchetti</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="font-size: var(--text-base); margin-bottom: var(--space-3);">Supporto</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--space-2);"><a href="#" style="color: var(--gray-400); font-size: var(--text-sm);">FAQ</a></li>
+                        <li style="margin-bottom: var(--space-2);"><a href="#" style="color: var(--gray-400); font-size: var(--text-sm);">Contatti</a></li>
+                        <li style="margin-bottom: var(--space-2);"><a href="#" style="color: var(--gray-400); font-size: var(--text-sm);">Privacy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="font-size: var(--text-base); margin-bottom: var(--space-3);">Seguici</h4>
+                    <div style="display: flex; gap: var(--space-4);">
+                        <a href="#" style="color: var(--gray-400); font-size: var(--text-xl);"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: var(--gray-400); font-size: var(--text-xl);"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: var(--gray-400); font-size: var(--text-xl);"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--gray-800);">
+                <p style="color: var(--gray-500); font-size: var(--text-sm);">© 2025 CreaViaggi. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile navbar toggle
+        document.getElementById('navbarToggle').addEventListener('click', () => {
+            document.getElementById('navbarMenu').classList.toggle('active');
+        });
+
+        // Demo form handling
+        document.getElementById('flightSearchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            
+            // Update info badges
+            const departure = document.getElementById('departureAirport').value || 'Roma';
+            const arrival = document.getElementById('arrivalAirport').value || 'Parigi';
+            const passengers = document.getElementById('passengers').value;
+            
+            document.getElementById('routeInfo').textContent = `${departure} → ${arrival}`;
+            document.getElementById('dateInfo').textContent = 'Oggi - Domani';
+            document.getElementById('passengersInfo').textContent = `${passengers} passeggeri`;
+            
+            // Simulate search
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('results').classList.remove('hidden');
+                
+                // Scroll to results
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

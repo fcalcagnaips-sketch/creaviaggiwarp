@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 Organizza il tuo Viaggio - CreaViaggi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Modern Style -->
+    <link rel="stylesheet" href="css/modern-style.css">
+    <!--
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        /* Stili specifici per organizza_viaggi - COMMENTATI PER USARE MODERN-STYLE.CSS */
 
         .container {
             max-width: 1200px;
@@ -369,77 +368,132 @@
             color: #e53e3e;
         }
     </style>
+    -->
 </head>
 <body>
-    <div class="container">
-        <a href="index.html" class="back-button">
-            <i class="fas fa-arrow-left"></i> Torna alla Home
-        </a>
-
-        <div class="header">
-            <h1>🌍 Organizza il tuo Viaggio</h1>
-            <p>Pacchetti completi: Volo + Hotel + Trasporti</p>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-plane-departure"></i>
+                CreaViaggi
+            </a>
+            
+            <button class="navbar-toggle" id="navbarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index.html" class="navbar-link"><i class="fas fa-search"></i> Cerca Voli</a></li>
+                <li><a href="hotels.html" class="navbar-link"><i class="fas fa-hotel"></i> Hotel</a></li>
+                <li><a href="organizza_viaggi.html" class="navbar-link active"><i class="fas fa-suitcase"></i> Pacchetti</a></li>
+                <li><a href="info.html" class="navbar-link"><i class="fas fa-info-circle"></i> Info</a></li>
+            </ul>
         </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🌍 Organizza il Tuo Viaggio Perfetto</h1>
+                <p class="hero-subtitle">Pacchetti completi: Volo + Hotel + Trasporti con assistenza AI</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
 
         <div class="search-card">
+            <div class="search-card-header">
+                <h2 class="search-card-title">Configura il Tuo Viaggio</h2>
+                <p class="search-card-description">Inserisci i dettagli per trovare il pacchetto perfetto</p>
+            </div>
+
             <form id="tripForm">
                 <div class="form-row">
                     <div class="input-group">
-                        <label for="departure">✈️ Aeroporto di Partenza</label>
-                        <input type="text" id="departure" placeholder="Es: Roma, FCO, Fiumicino..." required autocomplete="off">
+                        <label class="input-label input-label-required" for="departure">
+                            <i class="fas fa-plane-departure"></i> Aeroporto di Partenza
+                        </label>
+                        <input type="text" class="input-field" id="departure" placeholder="Es: Roma, FCO, Fiumicino..." required autocomplete="off">
                         <div id="departureAutocomplete" class="autocomplete-list hidden"></div>
                         <input type="hidden" id="departureCode">
+                        <span class="input-hint">Inizia a digitare per cercare aeroporti</span>
                     </div>
 
                     <div class="input-group">
-                        <label for="travelers">👥 Numero Persone</label>
-                        <input type="number" id="travelers" min="1" max="10" value="2" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="input-group">
-                        <label for="checkIn">📅 Data Check-in</label>
-                        <input type="date" id="checkIn" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="checkOut">📅 Data Check-out</label>
-                        <input type="date" id="checkOut" required>
+                        <label class="input-label input-label-required" for="travelers">
+                            <i class="fas fa-users"></i> Numero Persone
+                        </label>
+                        <input type="number" class="input-field" id="travelers" min="1" max="10" value="2" required>
+                        <span class="input-hint">Da 1 a 10 persone</span>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group">
-                        <label for="accommodation">🏨 Tipo Alloggio</label>
-                        <select id="accommodation" required>
-                            <option value="hotel">Hotel</option>
-                            <option value="apartment">Appartamento</option>
-                            <option value="bnb">Bed & Breakfast</option>
+                        <label class="input-label input-label-required" for="checkIn">
+                            <i class="fas fa-calendar-check"></i> Data Check-in
+                        </label>
+                        <input type="date" class="input-field" id="checkIn" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label input-label-required" for="checkOut">
+                            <i class="fas fa-calendar-times"></i> Data Check-out
+                        </label>
+                        <input type="date" class="input-field" id="checkOut" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label input-label-required" for="accommodation">
+                            <i class="fas fa-hotel"></i> Tipo Alloggio
+                        </label>
+                        <select class="input-select" id="accommodation" required>
+                            <option value="">Seleziona tipo alloggio</option>
+                            <option value="hotel">🏨 Hotel</option>
+                            <option value="apartment">🏢 Appartamento</option>
+                            <option value="bnb">🏠 Bed & Breakfast</option>
                         </select>
                     </div>
 
                     <div class="input-group">
-                        <label for="budget">💰 Budget per Persona (€)</label>
-                        <input type="number" id="budget" min="100" step="50" placeholder="Es: 500" required>
-                        <small>Include volo, alloggio e trasporti</small>
+                        <label class="input-label input-label-required" for="budget">
+                            <i class="fas fa-euro-sign"></i> Budget per Persona
+                        </label>
+                        <input type="number" class="input-field" id="budget" min="100" step="50" placeholder="500" required>
+                        <span class="input-hint">Include volo, alloggio e trasporti</span>
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="preferences">💭 Preferenze (opzionale)</label>
-                    <input type="text" id="preferences" placeholder="Es: mare, cultura, avventura, relax..." autocomplete="off">
-                    <small>Aiuta l'AI a suggerirti le destinazioni perfette</small>
+                <!-- AI Natural Language Input -->
+                <div class="input-group" style="background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%); padding: var(--space-6); border-radius: var(--radius-xl); border: 2px dashed var(--primary-300); margin-bottom: var(--space-6);">
+                    <label for="preferences" class="input-label" style="color: var(--primary-700); font-weight: 700; display: flex; align-items: center; gap: var(--space-2);">
+                        <i class="fas fa-wand-magic-sparkles" style="font-size: var(--text-xl);"></i>
+                        Descrivi il tuo viaggio ideale (opzionale)
+                    </label>
+                    <input type="text" class="input-field" id="preferences" placeholder="Es: 'Weekend romantico al mare' o 'Settimana di cultura e gastronomia'" autocomplete="off" style="border: 2px solid var(--primary-200);">
+                    <span class="input-hint" style="color: var(--primary-700);"><i class="fas fa-robot"></i> L'AI ti suggerirà le destinazioni perfette in base alle tue preferenze</span>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button type="button" id="aiSuggestBtn" class="search-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); flex: 1;">
-                        <i class="fas fa-robot"></i> 🤖 Suggerisci Destinazioni AI
+                <!-- Action Buttons -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-4); margin-top: var(--space-4);">
+                    <button type="button" id="aiSuggestBtn" class="btn btn-outline btn-lg btn-full" style="border-color: var(--accent-500); color: var(--accent-500);">
+                        <i class="fas fa-robot"></i>
+                        Suggerimenti AI
                     </button>
-                    <button type="submit" class="search-btn" style="flex: 2;">
-                        <i class="fas fa-search"></i> Cerca Pacchetti Viaggio
+                    <button type="submit" class="btn btn-primary btn-lg btn-full">
+                        <i class="fas fa-search"></i>
+                        Cerca Pacchetti
                     </button>
                 </div>
+                
+                <p style="text-align: center; margin-top: var(--space-4); color: var(--gray-500); font-size: var(--text-sm);">
+                    <i class="fas fa-lightbulb"></i> Usa i suggerimenti AI per scoprire destinazioni personalizzate
+                </p>
             </form>
         </div>
 
@@ -891,6 +945,11 @@
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             window.tripOrganizer = new TripOrganizerApp();
+            
+            // Mobile navbar toggle
+            document.getElementById('navbarToggle')?.addEventListener('click', () => {
+                document.getElementById('navbarMenu').classList.toggle('active');
+            });
         });
     </script>
 </body>

@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏨 Ricerca Hotel - CreaViaggi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Modern Style -->
+    <link rel="stylesheet" href="css/modern-style.css">
+    <!--
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        /* Stili inline commentati per usare modern-style.css */
 
         .container {
             max-width: 1000px;
@@ -369,91 +368,139 @@
             color: #856404;
         }
     </style>
+    -->
 </head>
 <body>
-    <div class="container">
-        <a href="index.html" class="back-button">
-            <i class="fas fa-arrow-left"></i> Torna ai Voli
-        </a>
-
-        <div class="header">
-            <h1>🏨 Ricerca Hotel</h1>
-            <p>Trova l'alloggio perfetto per il tuo viaggio</p>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-plane-departure"></i>
+                CreaViaggi
+            </a>
+            
+            <button class="navbar-toggle" id="navbarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="index.html" class="navbar-link"><i class="fas fa-search"></i> Cerca Voli</a></li>
+                <li><a href="hotels.html" class="navbar-link active"><i class="fas fa-hotel"></i> Hotel</a></li>
+                <li><a href="organizza_viaggi.html" class="navbar-link"><i class="fas fa-suitcase"></i> Pacchetti</a></li>
+                <li><a href="info.html" class="navbar-link"><i class="fas fa-info-circle"></i> Info</a></li>
+            </ul>
         </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🏨 Trova il Tuo Hotel Perfetto</h1>
+                <p class="hero-subtitle">Prenota l'alloggio ideale per il tuo viaggio con le migliori tariffe</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
 
         <div class="search-card">
+            <div class="search-card-header">
+                <h2 class="search-card-title">Cerca Hotel</h2>
+                <p class="search-card-description">Trova l'alloggio perfetto per il tuo viaggio</p>
+            </div>
+
             <!-- Banner info volo se disponibile -->
-            <div id="flightInfoBanner" class="flight-info-banner hidden">
-                <h3>✈️ Dati dal tuo volo</h3>
-                <p id="flightRoute"></p>
-                <p id="flightDates"></p>
-                <p id="flightGuests"></p>
+            <div id="flightInfoBanner" class="hidden" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%); color: white; padding: var(--space-6); border-radius: var(--radius-xl); margin-bottom: var(--space-6);">
+                <h3 style="margin-bottom: var(--space-2); font-size: var(--text-lg);"><i class="fas fa-plane"></i> Dati dal tuo volo</h3>
+                <p id="flightRoute" style="margin: var(--space-1) 0; opacity: 0.95;"></p>
+                <p id="flightDates" style="margin: var(--space-1) 0; opacity: 0.95;"></p>
+                <p id="flightGuests" style="margin: var(--space-1) 0; opacity: 0.95;"></p>
             </div>
 
-            <div class="info-box">
-                <p><i class="fas fa-info-circle"></i> <strong>Nota:</strong> Le API Amadeus per hotel richiedono un account di produzione. Al momento la ricerca reindirizzerà a Booking.com con i parametri precompilati.</p>
+            <div class="badge badge-warning" style="display: block; padding: var(--space-4); margin-bottom: var(--space-6); text-align: center;">
+                <i class="fas fa-info-circle"></i> <strong>Nota:</strong> La ricerca reindirizzerà a Booking.com con i parametri precompilati
             </div>
 
-            <form id="hotelSearchForm" class="search-form">
+            <form id="hotelSearchForm">
                 <div class="form-row">
                     <div class="input-group">
-                        <label for="destination">🏙️ Destinazione</label>
-                        <input type="text" id="destination" name="destination" placeholder="Es: Londra, Roma, Parigi..." required>
-                        <small>Città o aeroporto di destinazione</small>
+                        <label class="input-label input-label-required" for="destination">
+                            <i class="fas fa-map-marker-alt"></i> Destinazione
+                        </label>
+                        <input type="text" class="input-field" id="destination" name="destination" placeholder="Es: Londra, Roma, Parigi..." required>
+                        <span class="input-hint">Città o luogo di destinazione</span>
                     </div>
 
                     <div class="input-group">
-                        <label for="destinationCode">📍 Codice IATA (opzionale)</label>
-                        <input type="text" id="destinationCode" name="destinationCode" placeholder="Es: LHR, FCO">
-                        <small>Codice aeroporto se disponibile</small>
+                        <label class="input-label" for="destinationCode">
+                            <i class="fas fa-code"></i> Codice IATA
+                        </label>
+                        <input type="text" class="input-field" id="destinationCode" name="destinationCode" placeholder="Es: LHR, FCO">
+                        <span class="input-hint">Opzionale - Codice aeroporto</span>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group">
-                        <label for="checkIn">📅 Check-in</label>
-                        <input type="date" id="checkIn" name="checkIn" required>
+                        <label class="input-label input-label-required" for="checkIn">
+                            <i class="fas fa-calendar-check"></i> Check-in
+                        </label>
+                        <input type="date" class="input-field" id="checkIn" name="checkIn" required>
                     </div>
 
                     <div class="input-group">
-                        <label for="checkOut">📅 Check-out</label>
-                        <input type="date" id="checkOut" name="checkOut" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="input-group">
-                        <label for="guests">👥 Ospiti</label>
-                        <input type="number" id="guests" name="guests" min="1" max="10" value="2" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="rooms">🛏️ Camere</label>
-                        <input type="number" id="rooms" name="rooms" min="1" max="10" value="1" required>
+                        <label class="input-label input-label-required" for="checkOut">
+                            <i class="fas fa-calendar-times"></i> Check-out
+                        </label>
+                        <input type="date" class="input-field" id="checkOut" name="checkOut" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group">
-                        <label for="budget">💰 Budget Massimo (€/notte)</label>
-                        <input type="number" id="budget" name="budget" min="0" step="10" placeholder="Es: 150">
-                        <small>Lascia vuoto per nessun limite</small>
+                        <label class="input-label input-label-required" for="guests">
+                            <i class="fas fa-users"></i> Ospiti
+                        </label>
+                        <input type="number" class="input-field" id="guests" name="guests" min="1" max="10" value="2" required>
+                        <span class="input-hint">Numero totale di ospiti</span>
                     </div>
 
                     <div class="input-group">
-                        <label for="stars">⭐ Categoria Hotel</label>
-                        <select id="stars" name="stars">
-                            <option value="">Tutte</option>
-                            <option value="2">2 stelle o più</option>
-                            <option value="3">3 stelle o più</option>
-                            <option value="4">4 stelle o più</option>
-                            <option value="5">5 stelle</option>
+                        <label class="input-label input-label-required" for="rooms">
+                            <i class="fas fa-bed"></i> Camere
+                        </label>
+                        <input type="number" class="input-field" id="rooms" name="rooms" min="1" max="10" value="1" required>
+                        <span class="input-hint">Numero di camere</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label" for="budget">
+                            <i class="fas fa-euro-sign"></i> Budget Massimo (per notte)
+                        </label>
+                        <input type="number" class="input-field" id="budget" name="budget" min="0" step="10" placeholder="150">
+                        <span class="input-hint">Lascia vuoto per nessun limite</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="stars">
+                            <i class="fas fa-star"></i> Categoria Hotel
+                        </label>
+                        <select class="input-select" id="stars" name="stars">
+                            <option value="">Tutte le categorie</option>
+                            <option value="2">⭐⭐ 2 stelle o più</option>
+                            <option value="3">⭐⭐⭐ 3 stelle o più</option>
+                            <option value="4">⭐⭐⭐⭐ 4 stelle o più</option>
+                            <option value="5">⭐⭐⭐⭐⭐ 5 stelle</option>
                         </select>
                     </div>
                 </div>
 
-                <button type="submit" class="search-btn">
-                    <i class="fas fa-search"></i> Cerca Hotel
+                <button type="submit" class="btn btn-primary btn-lg btn-full">
+                    <i class="fas fa-search"></i>
+                    Cerca Hotel su Booking.com
                 </button>
             </form>
         </div>
@@ -620,6 +667,11 @@
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             new HotelSearchApp();
+            
+            // Mobile navbar toggle
+            document.getElementById('navbarToggle')?.addEventListener('click', () => {
+                document.getElementById('navbarMenu').classList.toggle('active');
+            });
         });
     </script>
 </body>

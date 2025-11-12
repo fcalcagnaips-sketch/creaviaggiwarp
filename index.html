@@ -1158,6 +1158,31 @@
                 this.goToHotels(destinationCode, checkInDate, checkOutDate, guests);
             }
             
+            goToHotels(destinationCode, checkInDate, checkOutDate, guests = 1) {
+                // Se non c'è checkout date (solo andata), imposta +3 giorni dal check-in
+                if (!checkOutDate) {
+                    const checkin = new Date(checkInDate);
+                    checkin.setDate(checkin.getDate() + 3);
+                    checkOutDate = checkin.toISOString().split('T')[0];
+                }
+                
+                // Costruisci URL per la pagina hotel
+                const hotelUrl = new URL('hotels.html', window.location.href);
+                hotelUrl.searchParams.append('destination', destinationCode);
+                hotelUrl.searchParams.append('checkin', checkInDate);
+                hotelUrl.searchParams.append('checkout', checkOutDate);
+                hotelUrl.searchParams.append('guests', guests);
+                
+                console.log('🏨 Reindirizzamento a:', hotelUrl.toString());
+                
+                // Mostra notifica
+                this.showStatus(`Ricerca hotel a ${destinationCode}...`, 'success');
+                
+                // Reindirizza dopo un breve delay
+                setTimeout(() => {
+                    window.location.href = hotelUrl.toString();
+                }, 500);
+            }
             
             trackPurchase(flightId, price, currency) {
                 console.log('🛒 Click acquisto volo:', {

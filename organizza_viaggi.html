@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Organizza il tuo Viaggio - CreaViaggi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fafbfc;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .search-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .results.hidden {
+            display: none;
+        }
+
+        .trip-package {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .trip-package:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .trip-destination {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .trip-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .trip-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-box {
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .cost-breakdown {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .cost-breakdown h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .cost-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #667eea;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid #667eea;
+        }
+
+        .trip-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .autocomplete-list.hidden {
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f8f9ff;
+            color: #667eea;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            color: #666;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        .status-indicator.hidden {
+            display: none;
+        }
+
+        .status-indicator.success {
+            border-left: 4px solid #38a169;
+            color: #38a169;
+        }
+
+        .status-indicator.error {
+            border-left: 4px solid #e53e3e;
+            color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Torna alla Home
+        </a>
+
+        <div class="header">
+            <h1>🌍 Organizza il tuo Viaggio</h1>
+            <p>Pacchetti completi: Volo + Hotel + Trasporti</p>
+        </div>
+
+        <div class="search-card">
+            <form id="tripForm">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="departure">✈️ Aeroporto di Partenza</label>
+                        <input type="text" id="departure" placeholder="Es: Roma, FCO, Fiumicino..." required autocomplete="off">
+                        <div id="departureAutocomplete" class="autocomplete-list hidden"></div>
+                        <input type="hidden" id="departureCode">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="travelers">👥 Numero Persone</label>
+                        <input type="number" id="travelers" min="1" max="10" value="2" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="checkIn">📅 Data Check-in</label>
+                        <input type="date" id="checkIn" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="checkOut">📅 Data Check-out</label>
+                        <input type="date" id="checkOut" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="accommodation">🏨 Tipo Alloggio</label>
+                        <select id="accommodation" required>
+                            <option value="hotel">Hotel</option>
+                            <option value="apartment">Appartamento</option>
+                            <option value="bnb">Bed & Breakfast</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="budget">💰 Budget per Persona (€)</label>
+                        <input type="number" id="budget" min="100" step="50" placeholder="Es: 500" required>
+                        <small>Include volo, alloggio e trasporti</small>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="preferences">💭 Preferenze (opzionale)</label>
+                    <input type="text" id="preferences" placeholder="Es: mare, cultura, avventura, relax..." autocomplete="off">
+                    <small>Aiuta l'AI a suggerirti le destinazioni perfette</small>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" id="aiSuggestBtn" class="search-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); flex: 1;">
+                        <i class="fas fa-robot"></i> 🤖 Suggerisci Destinazioni AI
+                    </button>
+                    <button type="submit" class="search-btn" style="flex: 2;">
+                        <i class="fas fa-search"></i> Cerca Pacchetti Viaggio
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <h3>Sto organizzando il tuo viaggio...</h3>
+            <p>Ricerca delle migliori combinazioni volo + hotel + trasporti</p>
+        </div>
+
+        <div id="results" class="results hidden"></div>
+
+        <div id="noResults" class="no-results hidden">
+            <i class="fas fa-sad-tear"></i>
+            <h3>Nessun pacchetto trovato</h3>
+            <p>Prova ad aumentare il budget o modificare le date</p>
+        </div>
+    </div>
+
+    <div id="statusIndicator" class="status-indicator hidden">
+        <span id="statusText"></span>
+    </div>
+
+    <script src="js/amadeus-api.js"></script>
+    <script src="js/llm-client.js"></script>
+    <script>
+        class TripOrganizerApp {
+            constructor() {
+                this.form = document.getElementById('tripForm');
+                this.loadingDiv = document.getElementById('loading');
+                this.resultsDiv = document.getElementById('results');
+                this.noResultsDiv = document.getElementById('noResults');
+                this.departureInput = document.getElementById('departure');
+                this.departureAutocomplete = document.getElementById('departureAutocomplete');
+                this.departureCode = document.getElementById('departureCode');
+                this.debounceTimer = null;
+                
+                // Costi stimati taxi per km
+                this.taxiCostPerKm = 1.5;
+                this.averageAirportDistance = 25; // km medi aeroporto-centro città
+                
+                this.initializeApp();
+            }
+
+            async initializeApp() {
+                this.setupEventListeners();
+                this.setDefaultDates();
+                await this.checkApiConnection();
+            }
+
+            setupEventListeners() {
+                this.form.addEventListener('submit', (e) => this.handleSearch(e));
+                
+                // AI Suggerimenti
+                document.getElementById('aiSuggestBtn').addEventListener('click', () => this.handleAISuggestions());
+                
+                // Autocomplete aeroporto
+                this.departureInput.addEventListener('input', (e) => this.handleAirportSearch(e));
+                
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.input-group')) {
+                        this.departureAutocomplete.classList.add('hidden');
+                    }
+                });
+
+                // Date validation
+                document.getElementById('checkIn').addEventListener('change', () => {
+                    const checkOut = document.getElementById('checkOut');
+                    checkOut.min = document.getElementById('checkIn').value;
+                });
+            }
+
+            setDefaultDates() {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 7);
+                const weekLater = new Date();
+                weekLater.setDate(weekLater.getDate() + 14);
+                
+                document.getElementById('checkIn').value = tomorrow.toISOString().split('T')[0];
+                document.getElementById('checkIn').min = new Date().toISOString().split('T')[0];
+                document.getElementById('checkOut').value = weekLater.toISOString().split('T')[0];
+                document.getElementById('checkOut').min = tomorrow.toISOString().split('T')[0];
+            }
+
+            async checkApiConnection() {
+                try {
+                    await window.amadeusAPI.checkConnection();
+                    console.log('✅ API Amadeus connesso');
+                } catch (error) {
+                    console.error('❌ Errore connessione API:', error);
+                }
+            }
+
+            async handleAirportSearch(event) {
+                const keyword = event.target.value.trim();
+                
+                clearTimeout(this.debounceTimer);
+                
+                if (keyword.length < 2) {
+                    this.departureAutocomplete.classList.add('hidden');
+                    return;
+                }
+                
+                this.debounceTimer = setTimeout(async () => {
+                    try {
+                        const airports = await window.amadeusAPI.searchAirports(keyword, 8);
+                        this.displayAutocomplete(airports);
+                    } catch (error) {
+                        console.error('Errore ricerca aeroporti:', error);
+                    }
+                }, 300);
+            }
+
+            displayAutocomplete(airports) {
+                if (airports.length === 0) {
+                    this.departureAutocomplete.classList.add('hidden');
+                    return;
+                }
+                
+                this.departureAutocomplete.innerHTML = airports.map(airport => 
+                    `<div class="autocomplete-item" data-code="${airport.iataCode}" data-city="${airport.city}">
+                        ${airport.name} (${airport.iataCode}) - ${airport.city}, ${airport.country}
+                    </div>`
+                ).join('');
+                
+                this.departureAutocomplete.querySelectorAll('.autocomplete-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        this.departureInput.value = `${item.textContent.trim()}`;
+                        this.departureCode.value = item.dataset.code;
+                        this.departureAutocomplete.classList.add('hidden');
+                    });
+                });
+                
+                this.departureAutocomplete.classList.remove('hidden');
+            }
+
+            async handleSearch(event) {
+                event.preventDefault();
+
+                const departureCode = this.departureCode.value;
+                const travelers = parseInt(document.getElementById('travelers').value);
+                const checkIn = document.getElementById('checkIn').value;
+                const checkOut = document.getElementById('checkOut').value;
+                const accommodation = document.getElementById('accommodation').value;
+                const budget = parseFloat(document.getElementById('budget').value);
+
+                if (!departureCode) {
+                    this.showStatus('Seleziona un aeroporto valido dall\'autocompletamento', 'error');
+                    return;
+                }
+
+                this.showLoading();
+                this.hideResults();
+
+                try {
+                    const packages = await this.searchTripPackages({
+                        origin: departureCode,
+                        travelers,
+                        checkIn,
+                        checkOut,
+                        accommodation,
+                        budget
+                    });
+
+                    this.hideLoading();
+                    if (packages.length > 0) {
+                        this.displayPackages(packages);
+                    } else {
+                        this.showNoResults();
+                    }
+                } catch (error) {
+                    console.error('❌ Errore ricerca pacchetti:', error);
+                    this.hideLoading();
+                    this.showStatus('Errore nella ricerca. Riprova.', 'error');
+                }
+            }
+
+            async searchTripPackages(params) {
+                console.log('🔍 Ricerca pacchetti con parametri:', params);
+
+                // Destinazioni popolari europee
+                const popularDestinations = [
+                    { code: 'LHR', city: 'Londra', country: 'Regno Unito' },
+                    { code: 'CDG', city: 'Parigi', country: 'Francia' },
+                    { code: 'MAD', city: 'Madrid', country: 'Spagna' },
+                    { code: 'BCN', city: 'Barcellona', country: 'Spagna' },
+                    { code: 'AMS', city: 'Amsterdam', country: 'Paesi Bassi' },
+                    { code: 'LIS', city: 'Lisbona', country: 'Portogallo' }
+                ];
+
+                const packages = [];
+
+                for (const dest of popularDestinations) {
+                    try {
+                        // Cerca voli
+                        const flights = await window.amadeusAPI.searchFlights({
+                            origin: params.origin,
+                            destination: dest.code,
+                            departureDate: params.checkIn,
+                            returnDate: params.checkOut,
+                            adults: params.travelers,
+                            max: 3
+                        });
+
+                        if (flights.length > 0) {
+                            const flight = flights[0];
+                            const nights = this.calculateNights(params.checkIn, params.checkOut);
+                            
+                            // Calcola costo hotel stimato
+                            const hotelCostPerNight = this.estimateHotelCost(params.accommodation);
+                            const totalHotelCost = hotelCostPerNight * nights;
+                            
+                            // Calcola costo taxi (andata + ritorno)
+                            const taxiCost = this.estimateTaxiCost();
+                            
+                            // Totale per persona
+                            const totalPerPerson = flight.price.total + (totalHotelCost / params.travelers) + (taxiCost / params.travelers);
+
+                            // Controlla se rientra nel budget
+                            if (totalPerPerson <= params.budget) {
+                                packages.push({
+                                    id: `trip_${dest.code}_${Date.now()}`,
+                                    destination: dest,
+                                    flight: flight,
+                                    hotel: {
+                                        type: params.accommodation,
+                                        costPerNight: hotelCostPerNight,
+                                        nights: nights,
+                                        totalCost: totalHotelCost
+                                    },
+                                    taxi: {
+                                        cost: taxiCost
+                                    },
+                                    travelers: params.travelers,
+                                    checkIn: params.checkIn,
+                                    checkOut: params.checkOut,
+                                    totalPerPerson: totalPerPerson,
+                                    totalTrip: totalPerPerson * params.travelers
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.warn(`Errore ricerca per ${dest.city}:`, error);
+                    }
+                }
+
+                // Ordina per prezzo
+                return packages.sort((a, b) => a.totalPerPerson - b.totalPerPerson);
+            }
+
+            calculateNights(checkIn, checkOut) {
+                const start = new Date(checkIn);
+                const end = new Date(checkOut);
+                return Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            }
+
+            estimateHotelCost(type) {
+                const costs = {
+                    'hotel': 120,
+                    'apartment': 90,
+                    'bnb': 70
+                };
+                return costs[type] || 100;
+            }
+
+            estimateTaxiCost() {
+                // Andata + ritorno aeroporto-hotel
+                return (this.averageAirportDistance * this.taxiCostPerKm * 2);
+            }
+
+            displayPackages(packages) {
+                this.resultsDiv.innerHTML = packages.map(pkg => this.createPackageCard(pkg)).join('');
+                this.resultsDiv.classList.remove('hidden');
+                this.showStatus(`Trovati ${packages.length} pacchetti nel tuo budget!`, 'success');
+            }
+
+            createPackageCard(pkg) {
+                const accommodationNames = {
+                    'hotel': 'Hotel',
+                    'apartment': 'Appartamento',
+                    'bnb': 'B&B'
+                };
+
+                return `
+                    <div class="trip-package">
+                        <div class="trip-header">
+                            <div class="trip-destination">
+                                <i class="fas fa-map-marker-alt"></i> ${pkg.destination.city}
+                            </div>
+                            <div class="trip-badge">
+                                ${pkg.hotel.nights} notti • ${pkg.travelers} ${pkg.travelers === 1 ? 'persona' : 'persone'}
+                            </div>
+                        </div>
+
+                        <div class="trip-details">
+                            <div class="detail-box">
+                                <div class="detail-label">Volo A/R</div>
+                                <div class="detail-value">${pkg.flight.price.formatted}</div>
+                            </div>
+                            <div class="detail-box">
+                                <div class="detail-label">${accommodationNames[pkg.hotel.type]}</div>
+                                <div class="detail-value">€${pkg.hotel.totalCost.toFixed(2)}</div>
+                            </div>
+                            <div class="detail-box">
+                                <div class="detail-label">Taxi A/R</div>
+                                <div class="detail-value">€${pkg.taxi.cost.toFixed(2)}</div>
+                            </div>
+                            <div class="detail-box">
+                                <div class="detail-label">Totale/Persona</div>
+                                <div class="detail-value" style="color: #48bb78;">€${pkg.totalPerPerson.toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        <div class="cost-breakdown">
+                            <h3><i class="fas fa-receipt"></i> Dettaglio Costi</h3>
+                            <div class="cost-item">
+                                <span>Volo per ${pkg.travelers} ${pkg.travelers === 1 ? 'persona' : 'persone'}</span>
+                                <span>€${(pkg.flight.price.total * pkg.travelers).toFixed(2)}</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>${accommodationNames[pkg.hotel.type]} (${pkg.hotel.nights} notti × €${pkg.hotel.costPerNight}/notte)</span>
+                                <span>€${pkg.hotel.totalCost.toFixed(2)}</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Taxi aeroporto-hotel A/R</span>
+                                <span>€${pkg.taxi.cost.toFixed(2)}</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>TOTALE VIAGGIO</span>
+                                <span>€${pkg.totalTrip.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <div class="trip-actions">
+                            <button class="btn-primary" onclick="window.tripOrganizer.goToTripDetail('${pkg.id}', ${JSON.stringify(pkg).replace(/"/g, '&quot;')})">
+                                <i class="fas fa-arrow-right"></i> Vai al Viaggio
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            goToTripDetail(id, packageData) {
+                // Salva i dati del pacchetto in sessionStorage
+                sessionStorage.setItem('currentTrip', JSON.stringify(packageData));
+                
+                // Naviga alla pagina dettaglio
+                window.location.href = `viaggio_dettaglio.html?id=${id}`;
+            }
+
+            showLoading() {
+                this.loadingDiv.classList.remove('hidden');
+            }
+
+            hideLoading() {
+                this.loadingDiv.classList.add('hidden');
+            }
+
+            hideResults() {
+                this.resultsDiv.classList.add('hidden');
+                this.noResultsDiv.classList.add('hidden');
+            }
+
+            showNoResults() {
+                this.noResultsDiv.classList.remove('hidden');
+            }
+
+            showStatus(message, type) {
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+                
+                text.textContent = message;
+                indicator.className = `status-indicator ${type}`;
+                indicator.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    indicator.classList.add('hidden');
+                }, 4000);
+            }
+
+            async handleAISuggestions() {
+                const travelers = parseInt(document.getElementById('travelers').value) || 2;
+                const checkIn = document.getElementById('checkIn').value;
+                const checkOut = document.getElementById('checkOut').value;
+                const budget = parseFloat(document.getElementById('budget').value);
+                const preferences = document.getElementById('preferences').value || '';
+
+                if (!checkIn || !checkOut || !budget) {
+                    this.showStatus('Compila almeno date e budget per i suggerimenti AI', 'error');
+                    return;
+                }
+
+                const nights = this.calculateNights(checkIn, checkOut);
+
+                this.showLoading();
+                this.loadingDiv.querySelector('h3').textContent = '🤖 AI sta pensando alle destinazioni perfette...';
+                this.loadingDiv.querySelector('p').textContent = 'Analisi budget, preferenze e stagionalità';
+
+                try {
+                    const result = await window.llmClient.suggestDestinations(travelers, nights, budget, preferences);
+                    
+                    this.hideLoading();
+
+                    if (result.success && result.data) {
+                        this.showAISuggestions(result.data, {travelers, nights, budget, preferences});
+                    } else {
+                        this.showStatus('Errore AI: ' + (result.error || 'Risposta non valida'), 'error');
+                    }
+                } catch (error) {
+                    this.hideLoading();
+                    this.showStatus('Errore nel contattare l\'AI', 'error');
+                    console.error(error);
+                }
+            }
+
+            showAISuggestions(suggestions, params) {
+                if (!Array.isArray(suggestions) || suggestions.length === 0) {
+                    this.showStatus('L\'AI non ha trovato suggerimenti', 'error');
+                    return;
+                }
+
+                const html = `
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 2rem; border-radius: 15px; margin-bottom: 2rem;">
+                        <h2 style="margin-bottom: 1rem;">🤖 Suggerimenti AI per te</h2>
+                        <p>In base al tuo budget di €${params.budget}/persona per ${params.nights} notti${params.preferences ? `, con preferenza per: ${params.preferences}` : ''}</p>
+                    </div>
+                    ${suggestions.map((sug, index) => `
+                        <div class="trip-package" style="border-left: 5px solid #f5576c;">
+                            <div class="trip-header">
+                                <div class="trip-destination">
+                                    ${index + 1}. <i class="fas fa-map-marker-alt"></i> ${sug.city}, ${sug.country}
+                                </div>
+                                <div class="trip-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                    Score: ${sug.score}/100
+                                </div>
+                            </div>
+                            <div class="description" style="background: #fff5f8; margin-bottom: 1rem;">
+                                <p><strong>🎯 Perché è perfetta:</strong> ${sug.reason}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+
+                this.resultsDiv.innerHTML = html;
+                this.resultsDiv.classList.remove('hidden');
+                this.showStatus(`🤖 AI ha suggerito ${suggestions.length} destinazioni!`, 'success');
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.tripOrganizer = new TripOrganizerApp();
+        });
+    </script>
+</body>
+</html>

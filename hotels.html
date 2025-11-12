@@ -524,15 +524,18 @@
                     const banner = document.getElementById('flightInfoBanner');
                     banner.classList.remove('hidden');
 
-                    // Popola i campi
+                    // Popola i campi - supporta sia checkIn/checkOut che checkin/checkout
                     document.getElementById('destination').value = params.get('destinationCity') || params.get('destination');
                     document.getElementById('destinationCode').value = params.get('destination');
                     
-                    if (params.has('checkIn')) {
-                        document.getElementById('checkIn').value = params.get('checkIn');
+                    const checkInValue = params.get('checkIn') || params.get('checkin');
+                    const checkOutValue = params.get('checkOut') || params.get('checkout');
+                    
+                    if (checkInValue) {
+                        document.getElementById('checkIn').value = checkInValue;
                     }
-                    if (params.has('checkOut')) {
-                        document.getElementById('checkOut').value = params.get('checkOut');
+                    if (checkOutValue) {
+                        document.getElementById('checkOut').value = checkOutValue;
                     }
                     if (params.has('guests')) {
                         document.getElementById('guests').value = params.get('guests');
@@ -543,7 +546,7 @@
 
                     // Mostra info volo nel banner
                     document.getElementById('flightRoute').textContent = `Volo: ${params.get('origin') || 'N/A'} → ${params.get('destination')}`;
-                    document.getElementById('flightDates').textContent = `Date: ${params.get('checkIn')} - ${params.get('checkOut')}`;
+                    document.getElementById('flightDates').textContent = `Date: ${checkInValue} - ${checkOutValue}`;
                     document.getElementById('flightGuests').textContent = `Ospiti: ${params.get('guests') || 1}`;
                 }
             }

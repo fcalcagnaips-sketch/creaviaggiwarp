@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Test LLM - CreaViaggi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .test-card h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result.success {
+            border-left-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .result.error {
+            border-left-color: #e53e3e;
+            background: #fff5f5;
+            color: #c53030;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status.online {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status.offline {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Torna alla Home</a>
+
+        <div class="header">
+            <h1>🤖 Test Integrazione LLM</h1>
+            <p>Verifica che DeepSeek R1 funzioni correttamente</p>
+            <div style="margin-top: 1rem;">
+                <span>Stato servizio:</span>
+                <span id="status" class="status offline">Verificando...</span>
+            </div>
+        </div>
+
+        <!-- Test 1: Parsing Linguaggio Naturale -->
+        <div class="test-card">
+            <h2>1️⃣ Parsing Linguaggio Naturale</h2>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Scrivi una richiesta di viaggio in linguaggio naturale e l'AI estrarrà i parametri.
+            </p>
+            <div class="input-group">
+                <label>Scrivi la tua richiesta:</label>
+                <textarea id="naturalInput" placeholder="Es: Voglio andare a Parigi 5 giorni con 600 euro per 2 persone"></textarea>
+            </div>
+            <button class="btn" onclick="testParsing()">
+                Analizza Richiesta
+            </button>
+            <div id="parseResult"></div>
+        </div>
+
+        <!-- Test 2: Suggerimenti Destinazioni -->
+        <div class="test-card">
+            <h2>2️⃣ Suggerimenti Destinazioni Intelligenti</h2>
+            <p style="color: #666; margin-bottom: 1rem;">
+                L'AI suggerisce le migliori destinazioni in base ai tuoi parametri.
+            </p>
+            <div class="grid">
+                <div class="input-group">
+                    <label>Persone:</label>
+                    <input type="number" id="suggestTravelers" value="2" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Notti:</label>
+                    <input type="number" id="suggestNights" value="7" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Budget (€/persona):</label>
+                    <input type="number" id="suggestBudget" value="500" min="100">
+                </div>
+                <div class="input-group">
+                    <label>Preferenze:</label>
+                    <input type="text" id="suggestPrefs" placeholder="Es: mare e relax">
+                </div>
+            </div>
+            <button class="btn" onclick="testSuggestions()">
+                Chiedi Suggerimenti
+            </button>
+            <div id="suggestResult"></div>
+        </div>
+
+        <!-- Test 3: Generazione Descrizione -->
+        <div class="test-card">
+            <h2>3️⃣ Genera Descrizione Pacchetto</h2>
+            <p style="color: #666; margin-bottom: 1rem;">
+                L'AI crea una descrizione accattivante per il tuo pacchetto viaggio.
+            </p>
+            <div class="grid">
+                <div class="input-group">
+                    <label>Destinazione:</label>
+                    <input type="text" id="descDestination" value="Barcellona">
+                </div>
+                <div class="input-group">
+                    <label>Notti:</label>
+                    <input type="number" id="descNights" value="5">
+                </div>
+                <div class="input-group">
+                    <label>Budget (€):</label>
+                    <input type="number" id="descBudget" value="600">
+                </div>
+                <div class="input-group">
+                    <label>Tipo Alloggio:</label>
+                    <select id="descAccommodation">
+                        <option value="hotel">Hotel</option>
+                        <option value="apartment">Appartamento</option>
+                        <option value="bnb">B&B</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="testDescription()">
+                Genera Descrizione
+            </button>
+            <div id="descResult"></div>
+        </div>
+
+        <!-- Test 4: Domanda all'assistente -->
+        <div class="test-card">
+            <h2>4️⃣ Assistente Virtuale</h2>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Fai una domanda generica sui viaggi all'AI.
+            </p>
+            <div class="input-group">
+                <label>La tua domanda:</label>
+                <textarea id="questionInput" placeholder="Es: Qual è il periodo migliore per visitare Parigi?"></textarea>
+            </div>
+            <button class="btn" onclick="testQuestion()">
+                Chiedi all'AI
+            </button>
+            <div id="questionResult"></div>
+        </div>
+    </div>
+
+    <script src="js/llm-client.js"></script>
+    <script>
+        // Verifica stato servizio all'avvio
+        window.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('status');
+            try {
+                const isOnline = await window.llmClient.checkHealth();
+                if (isOnline) {
+                    statusEl.textContent = '🟢 Online';
+                    statusEl.className = 'status online';
+                } else {
+                    statusEl.textContent = '🔴 Offline';
+                    statusEl.className = 'status offline';
+                }
+            } catch (error) {
+                statusEl.textContent = '🔴 Errore';
+                statusEl.className = 'status offline';
+            }
+        });
+
+        // Test 1: Parsing
+        async function testParsing() {
+            const input = document.getElementById('naturalInput').value;
+            const resultEl = document.getElementById('parseResult');
+            const btn = event.target;
+            
+            if (!input.trim()) {
+                showResult(resultEl, 'Inserisci una richiesta!', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Elaborazione... <span class="loading"></span>';
+            
+            try {
+                const result = await window.llmClient.parseNaturalLanguage(input);
+                
+                if (result.success) {
+                    showResult(resultEl, JSON.stringify(result.data, null, 2), 'success');
+                } else {
+                    const errorMsg = 'Errore: ' + result.error + 
+                        (result.raw ? '\n\nRisposta raw LLM:\n' + result.raw : '');
+                    showResult(resultEl, errorMsg, 'error');
+                }
+            } catch (error) {
+                showResult(resultEl, 'Errore: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Analizza Richiesta';
+            }
+        }
+
+        // Test 2: Suggerimenti
+        async function testSuggestions() {
+            const travelers = document.getElementById('suggestTravelers').value;
+            const nights = document.getElementById('suggestNights').value;
+            const budget = document.getElementById('suggestBudget').value;
+            const prefs = document.getElementById('suggestPrefs').value;
+            const resultEl = document.getElementById('suggestResult');
+            const btn = event.target;
+            
+            btn.disabled = true;
+            btn.innerHTML = 'Elaborazione... <span class="loading"></span>';
+            
+            try {
+                const result = await window.llmClient.suggestDestinations(
+                    parseInt(travelers),
+                    parseInt(nights),
+                    parseInt(budget),
+                    prefs
+                );
+                
+                if (result.success) {
+                    showResult(resultEl, JSON.stringify(result.data, null, 2), 'success');
+                } else {
+                    showResult(resultEl, 'Errore: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult(resultEl, 'Errore: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Chiedi Suggerimenti';
+            }
+        }
+
+        // Test 3: Descrizione
+        async function testDescription() {
+            const destination = document.getElementById('descDestination').value;
+            const nights = document.getElementById('descNights').value;
+            const budget = document.getElementById('descBudget').value;
+            const accommodation = document.getElementById('descAccommodation').value;
+            const resultEl = document.getElementById('descResult');
+            const btn = event.target;
+            
+            btn.disabled = true;
+            btn.innerHTML = 'Elaborazione... <span class="loading"></span>';
+            
+            try {
+                const result = await window.llmClient.generateDescription(
+                    destination,
+                    parseInt(nights),
+                    parseInt(budget),
+                    accommodation
+                );
+                
+                if (result.success) {
+                    showResult(resultEl, result.content, 'success');
+                } else {
+                    showResult(resultEl, 'Errore: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult(resultEl, 'Errore: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Genera Descrizione';
+            }
+        }
+
+        // Test 4: Domanda
+        async function testQuestion() {
+            const question = document.getElementById('questionInput').value;
+            const resultEl = document.getElementById('questionResult');
+            const btn = event.target;
+            
+            if (!question.trim()) {
+                showResult(resultEl, 'Inserisci una domanda!', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Elaborazione... <span class="loading"></span>';
+            
+            try {
+                const result = await window.llmClient.askQuestion(question);
+                
+                if (result.success) {
+                    showResult(resultEl, result.content, 'success');
+                } else {
+                    showResult(resultEl, 'Errore: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult(resultEl, 'Errore: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Chiedi all\'AI';
+            }
+        }
+
+        // Helper per mostrare risultati
+        function showResult(element, content, type = 'success') {
+            element.innerHTML = `<div class="result ${type}">${content}</div>`;
+        }
+    </script>
+</body>
+</html>

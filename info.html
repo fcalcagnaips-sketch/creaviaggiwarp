@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 CreaViaggi - Informazioni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .nav-btn {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-btn h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-btn p {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .info-section {
+            margin-bottom: 2rem;
+        }
+        
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .info-section ul {
+            margin-left: 2rem;
+        }
+        
+        .info-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #38a169;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .tech-item {
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .tech-item h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 CreaViaggi</h1>
+            <p>Travel Planner con API Amadeus - Ambiente di Test</p>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn">
+                <h3>✈️ Ricerca Voli</h3>
+                <p>Interfaccia completa per la ricerca voli con autocompletamento aeroporti e risultati dettagliati</p>
+            </a>
+            
+            <a href="test.html" class="nav-btn">
+                <h3>🧪 Test API</h3>
+                <p>Pagina di debug per testare singolarmente le funzionalità delle API Amadeus</p>
+            </a>
+        </div>
+        
+        <div class="card">
+            <div class="info-section">
+                <h2>📊 Stato del Progetto</h2>
+                <ul>
+                    <li><strong>Autenticazione API Amadeus</strong> <span class="status-badge">✓ Funzionante</span></li>
+                    <li><strong>Ricerca Aeroporti</strong> <span class="status-badge">✓ Funzionante</span></li>
+                    <li><strong>Ricerca Voli</strong> <span class="status-badge">✓ Funzionante</span></li>
+                    <li><strong>Autocompletamento</strong> <span class="status-badge">✓ Funzionante</span></li>
+                    <li><strong>Design Responsive</strong> <span class="status-badge">✓ Funzionante</span></li>
+                </ul>
+            </div>
+            
+            <div class="info-section">
+                <h2>🔧 Stack Tecnologico</h2>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <h4>Frontend</h4>
+                        <p>HTML5, CSS3, JavaScript ES6+</p>
+                    </div>
+                    <div class="tech-item">
+                        <h4>API</h4>
+                        <p>Amadeus Travel API (Test Environment)</p>
+                    </div>
+                    <div class="tech-item">
+                        <h4>Server</h4>
+                        <p>Apache XAMPP</p>
+                    </div>
+                    <div class="tech-item">
+                        <h4>Design</h4>
+                        <p>Responsive, Mobile-First</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h2>🚀 Funzionalità Principali</h2>
+                <ul>
+                    <li><strong>Ricerca Voli Reali:</strong> Utilizza le API Amadeus per ottenere voli e prezzi aggiornati</li>
+                    <li><strong>Autocompletamento Aeroporti:</strong> Ricerca intelligente mentre digiti</li>
+                    <li><strong>Filtri Avanzati:</strong> Data andata/ritorno, numero passeggeri, classe di viaggio</li>
+                    <li><strong>Risultati Dettagliati:</strong> Prezzi, orari, durata, scali, compagnie aeree</li>
+                    <li><strong>Gestione Errori:</strong> Feedback chiari per l'utente</li>
+                    <li><strong>Loading States:</strong> Indicatori di caricamento durante le ricerche</li>
+                </ul>
+            </div>
+            
+            <div class="info-section">
+                <h2>🧪 Come Testare</h2>
+                <ul>
+                    <li><strong>Ricerca Aeroporti:</strong> Prova "ROM", "MIL", "LON", "PAR" per vedere l'autocompletamento</li>
+                    <li><strong>Rotte Consigliate:</strong> FCO→LHR, FCO→MAD, MXP→CDG, FCO→CDG</li>
+                    <li><strong>Date:</strong> Usa date future (sono preimpostate per domani e prossima settimana)</li>
+                    <li><strong>Debug:</strong> Apri la console del browser (F12) per i log dettagliati</li>
+                </ul>
+            </div>
+            
+            <div class="info-section">
+                <h2>⚡ URL di Accesso</h2>
+                <ul>
+                    <li><strong>Ricerca Voli:</strong> <code>http://localhost/creaviaggi/</code> o <code>http://localhost/creaviaggi/index</code></li>
+                    <li><strong>Test API:</strong> <code>http://localhost/creaviaggi/test</code></li>
+                    <li><strong>Questa pagina:</strong> <code>http://localhost/creaviaggi/info</code></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🌍 CreaViaggi Travel Planner - Powered by Amadeus API</p>
+            <p>Ambiente di sviluppo XAMPP - Settembre 2025</p>
+        </div>
+    </div>
+</body>
+</html>

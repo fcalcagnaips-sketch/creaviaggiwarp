@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏨 Ricerca Hotel - CreaViaggi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .flight-info-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .flight-info-banner h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .flight-info-banner p {
+            opacity: 0.9;
+            margin: 0.25rem 0;
+        }
+
+        .search-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fafbfc;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .search-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .results.hidden {
+            display: none;
+        }
+
+        .results-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .results-header h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotels-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .hotel-card {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hotel-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hotel-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .hotel-info h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotel-rating {
+            color: #f39c12;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotel-address {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .hotel-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-badge {
+            background: #f8f9ff;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .hotel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .hotel-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .book-button {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .book-button:hover {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        .status-indicator.hidden {
+            display: none;
+        }
+
+        .status-indicator.success {
+            border-left: 4px solid #38a169;
+            color: #38a169;
+        }
+
+        .status-indicator.error {
+            border-left: 4px solid #e53e3e;
+            color: #e53e3e;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Torna ai Voli
+        </a>
+
+        <div class="header">
+            <h1>🏨 Ricerca Hotel</h1>
+            <p>Trova l'alloggio perfetto per il tuo viaggio</p>
+        </div>
+
+        <div class="search-card">
+            <!-- Banner info volo se disponibile -->
+            <div id="flightInfoBanner" class="flight-info-banner hidden">
+                <h3>✈️ Dati dal tuo volo</h3>
+                <p id="flightRoute"></p>
+                <p id="flightDates"></p>
+                <p id="flightGuests"></p>
+            </div>
+
+            <div class="info-box">
+                <p><i class="fas fa-info-circle"></i> <strong>Nota:</strong> Le API Amadeus per hotel richiedono un account di produzione. Al momento la ricerca reindirizzerà a Booking.com con i parametri precompilati.</p>
+            </div>
+
+            <form id="hotelSearchForm" class="search-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="destination">🏙️ Destinazione</label>
+                        <input type="text" id="destination" name="destination" placeholder="Es: Londra, Roma, Parigi..." required>
+                        <small>Città o aeroporto di destinazione</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="destinationCode">📍 Codice IATA (opzionale)</label>
+                        <input type="text" id="destinationCode" name="destinationCode" placeholder="Es: LHR, FCO">
+                        <small>Codice aeroporto se disponibile</small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="checkIn">📅 Check-in</label>
+                        <input type="date" id="checkIn" name="checkIn" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="checkOut">📅 Check-out</label>
+                        <input type="date" id="checkOut" name="checkOut" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="guests">👥 Ospiti</label>
+                        <input type="number" id="guests" name="guests" min="1" max="10" value="2" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="rooms">🛏️ Camere</label>
+                        <input type="number" id="rooms" name="rooms" min="1" max="10" value="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="budget">💰 Budget Massimo (€/notte)</label>
+                        <input type="number" id="budget" name="budget" min="0" step="10" placeholder="Es: 150">
+                        <small>Lascia vuoto per nessun limite</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="stars">⭐ Categoria Hotel</label>
+                        <select id="stars" name="stars">
+                            <option value="">Tutte</option>
+                            <option value="2">2 stelle o più</option>
+                            <option value="3">3 stelle o più</option>
+                            <option value="4">4 stelle o più</option>
+                            <option value="5">5 stelle</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Cerca Hotel
+                </button>
+            </form>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <h3>Ricerca hotel in corso...</h3>
+            <p>Stiamo cercando le migliori offerte per te</p>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results hidden">
+            <div class="results-header">
+                <h2>Hotel Disponibili</h2>
+            </div>
+            <div id="hotelsContainer" class="hotels-grid"></div>
+        </div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div id="statusIndicator" class="status-indicator hidden">
+        <span id="statusText"></span>
+    </div>
+
+    <script>
+        class HotelSearchApp {
+            constructor() {
+                this.form = document.getElementById('hotelSearchForm');
+                this.loadingDiv = document.getElementById('loading');
+                this.resultsDiv = document.getElementById('results');
+                this.hotelsContainer = document.getElementById('hotelsContainer');
+                
+                this.initializeApp();
+            }
+
+            async initializeApp() {
+                this.setupEventListeners();
+                this.setDefaultDates();
+                this.loadFlightData();
+            }
+
+            setupEventListeners() {
+                this.form.addEventListener('submit', (e) => this.handleSearch(e));
+
+                // Date validation
+                document.getElementById('checkIn').addEventListener('change', () => {
+                    const checkOut = document.getElementById('checkOut');
+                    checkOut.min = document.getElementById('checkIn').value;
+                });
+            }
+
+            setDefaultDates() {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const dayAfter = new Date();
+                dayAfter.setDate(dayAfter.getDate() + 2);
+                
+                document.getElementById('checkIn').min = tomorrow.toISOString().split('T')[0];
+                document.getElementById('checkOut').min = dayAfter.toISOString().split('T')[0];
+            }
+
+            loadFlightData() {
+                // Leggi parametri URL
+                const params = new URLSearchParams(window.location.search);
+                
+                if (params.has('destination')) {
+                    const banner = document.getElementById('flightInfoBanner');
+                    banner.classList.remove('hidden');
+
+                    // Popola i campi
+                    document.getElementById('destination').value = params.get('destinationCity') || params.get('destination');
+                    document.getElementById('destinationCode').value = params.get('destination');
+                    
+                    if (params.has('checkIn')) {
+                        document.getElementById('checkIn').value = params.get('checkIn');
+                    }
+                    if (params.has('checkOut')) {
+                        document.getElementById('checkOut').value = params.get('checkOut');
+                    }
+                    if (params.has('guests')) {
+                        document.getElementById('guests').value = params.get('guests');
+                    }
+                    if (params.has('budget')) {
+                        document.getElementById('budget').value = params.get('budget');
+                    }
+
+                    // Mostra info volo nel banner
+                    document.getElementById('flightRoute').textContent = `Volo: ${params.get('origin') || 'N/A'} → ${params.get('destination')}`;
+                    document.getElementById('flightDates').textContent = `Date: ${params.get('checkIn')} - ${params.get('checkOut')}`;
+                    document.getElementById('flightGuests').textContent = `Ospiti: ${params.get('guests') || 1}`;
+                }
+            }
+
+            async handleSearch(event) {
+                event.preventDefault();
+
+                const destination = document.getElementById('destination').value.trim();
+                const destinationCode = document.getElementById('destinationCode').value.trim();
+                const checkIn = document.getElementById('checkIn').value;
+                const checkOut = document.getElementById('checkOut').value;
+                const guests = document.getElementById('guests').value;
+                const rooms = document.getElementById('rooms').value;
+                const budget = document.getElementById('budget').value;
+                const stars = document.getElementById('stars').value;
+
+                if (!destination || !checkIn || !checkOut) {
+                    this.showStatus('Compila tutti i campi obbligatori', 'error');
+                    return;
+                }
+
+                // Redirect a Booking.com con parametri precompilati
+                this.searchHotelsViaBooking({
+                    destination: destinationCode || destination,
+                    checkIn,
+                    checkOut,
+                    guests,
+                    rooms,
+                    budget
+                });
+            }
+
+            searchHotelsViaBooking(params) {
+                const { destination, checkIn, checkOut, guests, rooms, budget } = params;
+                
+                // Costruisci URL Booking.com
+                const bookingUrl = new URL('https://www.booking.com/searchresults.it.html');
+                bookingUrl.searchParams.append('ss', destination);
+                bookingUrl.searchParams.append('checkin', checkIn);
+                bookingUrl.searchParams.append('checkout', checkOut);
+                bookingUrl.searchParams.append('group_adults', guests);
+                bookingUrl.searchParams.append('no_rooms', rooms);
+                
+                if (budget) {
+                    bookingUrl.searchParams.append('nflt', `price=EUR-0-${budget}`);
+                }
+
+                this.showStatus('Reindirizzamento a Booking.com...', 'success');
+                
+                console.log('🏨 Parametri ricerca hotel:', params);
+                console.log('🔗 URL Booking:', bookingUrl.toString());
+
+                // Apri in nuova finestra
+                window.open(bookingUrl.toString(), '_blank');
+            }
+
+            showStatus(message, type) {
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+                
+                text.textContent = message;
+                indicator.className = `status-indicator ${type}`;
+                indicator.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    indicator.classList.add('hidden');
+                }, 4000);
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            new HotelSearchApp();
+        });
+    </script>
+</body>
+</html>

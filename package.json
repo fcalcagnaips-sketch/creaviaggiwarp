@@ -1,0 +1,23 @@
+{
+  "name": "travel-planner",
+  "version": "1.0.0",
+  "description": "A web application to organize trips based on departure/arrival cities, dates, number of people, and budget per person (including accommodation and transport)",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "dev": "live-server --port=3000 --open=/index.html"
+  },
+  "keywords": [
+    "travel",
+    "planner",
+    "trip",
+    "organizer",
+    "budget",
+    "vacation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

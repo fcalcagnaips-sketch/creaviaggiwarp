@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test API Amadeus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        .result {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .success { border-left-color: #38a169; }
+        .error { border-left-color: #e53e3e; color: #c53030; }
+        .loading { border-left-color: #3182ce; color: #2b6cb0; font-style: italic; }
+        input {
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-section {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section:last-child {
+            border-bottom: none;
+        }
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 13px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .status.hidden { opacity: 0; transform: translateX(100%); }
+        .status.success { border-left: 4px solid #38a169; color: #38a169; }
+        .status.error { border-left: 4px solid #e53e3e; color: #e53e3e; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test API Amadeus - XAMPP</h1>
+    
+    <div class="card">
+        <div class="test-section">
+            <h3>1️⃣ Test Connessione API</h3>
+            <button onclick="testConnection()">🔗 Testa Connessione</button>
+            <div id="connectionResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2️⃣ Test Ricerca Aeroporti</h3>
+            <input type="text" id="searchKeyword" placeholder="Es: Roma, Milano, Londra" style="width: 200px;">
+            <button onclick="searchAirports()">🔍 Cerca Aeroporti</button>
+            <button onclick="testQuickSearch('Roma')">🏛️ Roma</button>
+            <button onclick="testQuickSearch('Milano')">🏢 Milano</button>
+            <button onclick="testQuickSearch('Londra')">🎡 Londra</button>
+            <button onclick="testQuickSearch('Parigi')">🇫🇷 Parigi</button>
+            <div id="airportResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3️⃣ Test Ricerca Voli</h3>
+            <div style="margin-bottom: 10px;">
+                <input type="text" id="origin" placeholder="FCO" style="width: 80px;">
+                <span>→</span>
+                <input type="text" id="destination" placeholder="LHR" style="width: 80px;">
+                <input type="date" id="flightDate" style="width: 140px;">
+                <input type="number" id="adults" value="1" min="1" max="9" style="width: 60px;" placeholder="Adulti">
+            </div>
+            <button onclick="searchFlights()">✈️ Cerca Voli</button>
+            <button onclick="quickFlightSearch('FCO', 'LHR')">🇬🇧 FCO→LHR</button>
+            <button onclick="quickFlightSearch('FCO', 'MAD')">🇪🇸 FCO→MAD</button>
+            <button onclick="quickFlightSearch('MXP', 'CDG')">🇫🇷 MXP→CDG</button>
+            <div id="flightResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Status indicator -->
+    <div id="status" class="status hidden">
+        <span id="statusText"></span>
+    </div>
+
+    <script src="js/amadeus-api.js"></script>
+    <script>
+        // Imposta data di domani come default
+        document.getElementById('flightDate').value = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            const text = document.getElementById('statusText');
+            text.textContent = message;
+            status.className = `status ${type}`;
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 4000);
+        }
+        
+        function showResult(elementId, content, type = '') {
+            const element = document.getElementById(elementId);
+            element.textContent = content;
+            element.className = `result ${type}`;
+        }
+        
+        async function testConnection() {
+            showResult('connectionResult', 'Test connessione in corso...', 'loading');
+            try {
+                console.log('🔄 Test connessione API Amadeus...');
+                const isConnected = await window.amadeusAPI.checkConnection();
+                if (isConnected) {
+                    showResult('connectionResult', '✅ Connessione API Amadeus riuscita!\nToken ottenuto correttamente.', 'success');
+                    showStatus('API connesso!');
+                } else {
+                    showResult('connectionResult', '❌ Connessione API fallita', 'error');
+                    showStatus('Errore connessione', 'error');
+                }
+            } catch (error) {
+                showResult('connectionResult', `❌ Errore: ${error.message}`, 'error');
+                showStatus('Errore API', 'error');
+                console.error('Errore connessione:', error);
+            }
+        }
+        
+        async function searchAirports() {
+            const keyword = document.getElementById('searchKeyword').value.trim();
+            if (!keyword) {
+                showStatus('Inserisci una parola chiave', 'error');
+                return;
+            }
+            await testQuickSearch(keyword);
+        }
+        
+        async function testQuickSearch(keyword) {
+            showResult('airportResult', `Ricerca aeroporti per "${keyword}"...`, 'loading');
+            try {
+                console.log(`🔍 Ricerca aeroporti: ${keyword}`);
+                const airports = await window.amadeusAPI.searchAirports(keyword, 6);
+                
+                if (airports.length === 0) {
+                    showResult('airportResult', `❌ Nessun aeroporto trovato per "${keyword}"`, 'error');
+                    return;
+                }
+                
+                const results = airports.map((airport, index) => 
+                    `${index + 1}. ${airport.name} (${airport.iataCode})\n   📍 ${airport.city}, ${airport.country}`
+                ).join('\n\n');
+                
+                showResult('airportResult', `✅ Trovati ${airports.length} aeroporti:\n\n${results}`, 'success');
+                showStatus(`${airports.length} aeroporti trovati`);
+            } catch (error) {
+                showResult('airportResult', `❌ Errore ricerca: ${error.message}`, 'error');
+                showStatus('Errore ricerca aeroporti', 'error');
+                console.error('Errore ricerca aeroporti:', error);
+            }
+        }
+        
+        async function searchFlights() {
+            const origin = document.getElementById('origin').value.trim().toUpperCase();
+            const destination = document.getElementById('destination').value.trim().toUpperCase();
+            const date = document.getElementById('flightDate').value;
+            const adults = parseInt(document.getElementById('adults').value);
+            
+            if (!origin || !destination || !date || !adults) {
+                showStatus('Compila tutti i campi volo', 'error');
+                return;
+            }
+            
+            await quickFlightSearch(origin, destination, date, adults);
+        }
+        
+        async function quickFlightSearch(origin, destination, date = null, adults = 1) {
+            if (!date) date = document.getElementById('flightDate').value;
+            
+            showResult('flightResult', `Ricerca voli ${origin} → ${destination}...`, 'loading');
+            try {
+                console.log(`✈️ Ricerca voli: ${origin} → ${destination}`);
+                const flights = await window.amadeusAPI.searchFlights({
+                    origin,
+                    destination,
+                    departureDate: date,
+                    adults,
+                    max: 8
+                });
+                
+                if (flights.length === 0) {
+                    showResult('flightResult', `❌ Nessun volo trovato per ${origin} → ${destination}\nProva con date diverse o altre destinazioni.`, 'error');
+                    return;
+                }
+                
+                const results = flights.map((flight, index) => {
+                    const outbound = flight.outbound;
+                    const firstSeg = outbound.segments[0];
+                    const lastSeg = outbound.segments[outbound.segments.length - 1];
+                    
+                    return `${index + 1}. 💰 ${flight.price.formatted}
+   🛫 ${firstSeg.departure.iataCode} ${firstSeg.departure.timeFormatted} → ${lastSeg.arrival.iataCode} ${lastSeg.arrival.timeFormatted}
+   ⏱️ ${window.amadeusAPI.formatDuration(outbound.duration)} | ${outbound.totalStops > 0 ? `${outbound.totalStops} scalo${outbound.totalStops > 1 ? 'i' : ''}` : 'Diretto'}
+   ✈️ ${flight.validatingAirlineCodes.join(', ')} | 🪑 ${flight.numberOfBookableSeats} posti`;
+                }).join('\n\n');
+                
+                showResult('flightResult', `✅ Trovati ${flights.length} voli:\n\n${results}`, 'success');
+                showStatus(`${flights.length} voli trovati`);
+                
+                // Aggiorna i campi del form per facilità
+                document.getElementById('origin').value = origin;
+                document.getElementById('destination').value = destination;
+                
+            } catch (error) {
+                showResult('flightResult', `❌ Errore ricerca voli: ${error.message}`, 'error');
+                showStatus('Errore ricerca voli', 'error');
+                console.error('Errore ricerca voli:', error);
+            }
+        }
+        
+        // Test automatico all'avvio
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🚀 Avvio test automatico...');
+                testConnection();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

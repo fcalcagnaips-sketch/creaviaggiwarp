@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✈️ Ricerca Voli - Travel Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fafbfc;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .autocomplete-list.hidden {
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f8f9ff;
+            color: #667eea;
+        }
+
+        .autocomplete-item .airport-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .autocomplete-item .airport-details {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .search-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .results.hidden {
+            display: none;
+        }
+
+        .results-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .results-header h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-summary {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-summary span {
+            background: #f8f9ff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .flights-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .flight-card {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .flight-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .flight-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .airline-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .flight-route {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .airport-info {
+            text-align: center;
+        }
+
+        .airport-code {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .airport-time {
+            font-size: 1.1rem;
+            color: #667eea;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .route-arrow {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .route-arrow small {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .flight-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .flight-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .buy-button {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .buy-button:hover {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+        }
+        
+        .hotel-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .hotel-button:hover {
+            background: linear-gradient(135deg, #f5576c 0%, #e84393 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
+        }
+        
+        .flight-id {
+            font-size: 0.8rem;
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+        
+        /* Price badge styling */
+        .total-price-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .price-breakdown {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .price-highlight {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 2px 8px;
+            border-radius: 12px;
+            color: #2d3436;
+            font-weight: 600;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .no-results, .error-message {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+
+        .no-results i, .error-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        .error-message {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 10px;
+            color: #c53030;
+        }
+
+        .error-message i {
+            color: #e53e3e;
+        }
+
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        .status-indicator.success {
+            border-left: 4px solid #38a169;
+            color: #38a169;
+        }
+
+        .status-indicator.error {
+            border-left: 4px solid #e53e3e;
+            color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>✈️ Ricerca Voli</h1>
+            <p>Trova i migliori voli con le API Amadeus</p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-card">
+            <form id="flightSearchForm" class="search-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="departureAirport">🛫 Aeroporto di Partenza</label>
+                        <input type="text" id="departureAirport" placeholder="Es: Roma, Milano, Napoli..." autocomplete="off">
+                        <div id="departureAutocomplete" class="autocomplete-list hidden"></div>
+                        <input type="hidden" id="departureCode">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="arrivalAirport">🛬 Aeroporto di Arrivo</label>
+                        <input type="text" id="arrivalAirport" placeholder="Es: Londra, Parigi, Madrid..." autocomplete="off">
+                        <div id="arrivalAutocomplete" class="autocomplete-list hidden"></div>
+                        <input type="hidden" id="arrivalCode">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="departureDate">📅 Data di Partenza</label>
+                        <input type="date" id="departureDate" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="returnDate">🔄 Data di Ritorno</label>
+                        <input type="date" id="returnDate" disabled>
+                        <div style="margin-top: 8px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                                <input type="checkbox" id="roundTrip" style="width: auto;"> 
+                                <span>Andata e ritorno</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="passengers">👥 Passeggeri</label>
+                        <input type="number" id="passengers" min="1" max="9" value="1" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="travelClass">🎫 Classe di Viaggio</label>
+                        <select id="travelClass" style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 10px; background: #fafbfc;">
+                            <option value="ECONOMY">Economy</option>
+                            <option value="PREMIUM_ECONOMY">Premium Economy</option>
+                            <option value="BUSINESS">Business</option>
+                            <option value="FIRST">First Class</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="maxPrice">💰 Prezzo Massimo (€)</label>
+                        <input type="number" id="maxPrice" min="0" step="10" placeholder="Es: 500">
+                        <small>Lascia vuoto per nessun limite</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="priceType">🏷️ Tipo Prezzo</label>
+                        <select id="priceType" style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 10px; background: #fafbfc;">
+                            <option value="per_person">Per persona</option>
+                            <option value="total">Totale viaggio</option>
+                        </select>
+                        <small>Il filtro si applica al prezzo totale (andata + ritorno se selezionato)</small>
+                    </div>
+                </div>
+
+                <button type="submit" id="searchButton" class="search-btn">
+                    <i class="fas fa-search"></i> Cerca Voli
+                </button>
+            </form>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <h3>Ricerca voli in corso...</h3>
+            <p>Stiamo cercando le migliori offerte per te</p>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results hidden">
+            <div class="results-header">
+                <h2>Risultati Voli</h2>
+                <div class="search-summary">
+                    <span id="routeInfo"></span>
+                    <span id="dateInfo"></span>
+                    <span id="passengersInfo"></span>
+                </div>
+            </div>
+            <div id="flightsContainer" class="flights-grid"></div>
+        </div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div id="statusIndicator" class="status-indicator hidden">
+        <span id="statusText"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/amadeus-api.js"></script>
+    <script>
+        class FlightSearchApp {
+            constructor() {
+                this.form = document.getElementById('flightSearchForm');
+                this.departureInput = document.getElementById('departureAirport');
+                this.arrivalInput = document.getElementById('arrivalAirport');
+                this.departureAutocomplete = document.getElementById('departureAutocomplete');
+                this.arrivalAutocomplete = document.getElementById('arrivalAutocomplete');
+                this.departureCode = document.getElementById('departureCode');
+                this.arrivalCode = document.getElementById('arrivalCode');
+                this.loadingDiv = document.getElementById('loading');
+                this.resultsDiv = document.getElementById('results');
+                this.flightsContainer = document.getElementById('flightsContainer');
+                
+                this.debounceTimer = null;
+                this.initializeApp();
+            }
+
+            async initializeApp() {
+                this.setupEventListeners();
+                this.setDefaultDates();
+                await this.checkApiConnection();
+            }
+
+            setupEventListeners() {
+                // Form submission
+                this.form.addEventListener('submit', (e) => this.handleSearch(e));
+                
+                // Autocomplete for airports
+                this.departureInput.addEventListener('input', (e) => this.handleAirportInput(e, 'departure'));
+                this.arrivalInput.addEventListener('input', (e) => this.handleAirportInput(e, 'arrival'));
+                
+                // Close autocomplete when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.input-group')) {
+                        this.departureAutocomplete.classList.add('hidden');
+                        this.arrivalAutocomplete.classList.add('hidden');
+                    }
+                });
+
+                // Round trip checkbox
+                const roundTripCheckbox = document.getElementById('roundTrip');
+                const returnDateInput = document.getElementById('returnDate');
+                
+                roundTripCheckbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        returnDateInput.disabled = false;
+                        returnDateInput.required = true;
+                        // Set return date to departure + 7 days by default
+                        const departureDate = document.getElementById('departureDate').value;
+                        if (departureDate) {
+                            const returnDate = new Date(departureDate);
+                            returnDate.setDate(returnDate.getDate() + 7);
+                            returnDateInput.value = returnDate.toISOString().split('T')[0];
+                        }
+                    } else {
+                        returnDateInput.disabled = true;
+                        returnDateInput.required = false;
+                        returnDateInput.value = '';
+                    }
+                });
+
+                // Date validation
+                document.getElementById('departureDate').addEventListener('change', () => {
+                    const returnDate = document.getElementById('returnDate');
+                    returnDate.min = document.getElementById('departureDate').value;
+                    
+                    // Update return date if round trip is selected
+                    if (roundTripCheckbox.checked && !returnDate.value) {
+                        const departureDate = new Date(document.getElementById('departureDate').value);
+                        departureDate.setDate(departureDate.getDate() + 7);
+                        returnDate.value = departureDate.toISOString().split('T')[0];
+                    }
+                });
+            }
+
+            setDefaultDates() {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const weekLater = new Date();
+                weekLater.setDate(weekLater.getDate() + 8);
+                
+                document.getElementById('departureDate').value = tomorrow.toISOString().split('T')[0];
+                document.getElementById('departureDate').min = tomorrow.toISOString().split('T')[0];
+                document.getElementById('returnDate').value = weekLater.toISOString().split('T')[0];
+                document.getElementById('returnDate').min = tomorrow.toISOString().split('T')[0];
+            }
+
+            async checkApiConnection() {
+                try {
+                    const isConnected = await window.amadeusAPI.checkConnection();
+                    this.showStatus(isConnected ? 'API Amadeus connesso' : 'Errore connessione API', isConnected ? 'success' : 'error');
+                } catch (error) {
+                    this.showStatus('Errore connessione API', 'error');
+                }
+            }
+
+            async handleAirportInput(event, type) {
+                const keyword = event.target.value.trim();
+                const autocompleteEl = type === 'departure' ? this.departureAutocomplete : this.arrivalAutocomplete;
+                
+                clearTimeout(this.debounceTimer);
+                
+                if (keyword.length < 2) {
+                    autocompleteEl.classList.add('hidden');
+                    return;
+                }
+                
+                this.debounceTimer = setTimeout(async () => {
+                    try {
+                        const airports = await window.amadeusAPI.searchAirports(keyword, 8);
+                        this.displayAirportSuggestions(airports, type);
+                    } catch (error) {
+                        console.error('Errore ricerca aeroporti:', error);
+                        autocompleteEl.classList.add('hidden');
+                    }
+                }, 300);
+            }
+
+            displayAirportSuggestions(airports, type) {
+                const autocompleteEl = type === 'departure' ? this.departureAutocomplete : this.arrivalAutocomplete;
+                
+                if (airports.length === 0) {
+                    autocompleteEl.classList.add('hidden');
+                    return;
+                }
+                
+                autocompleteEl.innerHTML = airports.map(airport => `
+                    <div class="autocomplete-item" data-iata="${airport.iataCode}" data-name="${airport.name}" data-city="${airport.city}">
+                        <div class="airport-name">${airport.name} (${airport.iataCode})</div>
+                        <div class="airport-details">${airport.city}, ${airport.country}</div>
+                    </div>
+                `).join('');
+                
+                autocompleteEl.querySelectorAll('.autocomplete-item').forEach(item => {
+                    item.addEventListener('click', () => this.selectAirport(item, type));
+                });
+                
+                autocompleteEl.classList.remove('hidden');
+            }
+
+            selectAirport(item, type) {
+                const iataCode = item.dataset.iata;
+                const name = item.dataset.name;
+                const city = item.dataset.city;
+                
+                if (type === 'departure') {
+                    this.departureInput.value = `${name} (${iataCode}) - ${city}`;
+                    this.departureCode.value = iataCode;
+                    this.departureAutocomplete.classList.add('hidden');
+                } else {
+                    this.arrivalInput.value = `${name} (${iataCode}) - ${city}`;
+                    this.arrivalCode.value = iataCode;
+                    this.arrivalAutocomplete.classList.add('hidden');
+                }
+            }
+
+            async handleSearch(event) {
+                event.preventDefault();
+                
+                const departureCode = this.departureCode.value;
+                const arrivalCode = this.arrivalCode.value;
+                const departureDate = document.getElementById('departureDate').value;
+                const returnDate = document.getElementById('returnDate').value;
+                const passengers = parseInt(document.getElementById('passengers').value);
+                const travelClass = document.getElementById('travelClass').value;
+                const maxPrice = document.getElementById('maxPrice').value;
+                const priceType = document.getElementById('priceType').value;
+                const isRoundTrip = document.getElementById('roundTrip').checked;
+                
+                if (!departureCode || !arrivalCode) {
+                    this.showStatus('Seleziona aeroporti validi dall\'autocompletamento', 'error');
+                    return;
+                }
+                
+                if (!departureDate || !passengers) {
+                    this.showStatus('Compila tutti i campi obbligatori', 'error');
+                    return;
+                }
+                
+                // Validazione andata e ritorno
+                if (isRoundTrip && !returnDate) {
+                    this.showStatus('Seleziona una data di ritorno per andata e ritorno', 'error');
+                    return;
+                }
+                
+                const searchParams = {
+                    origin: departureCode,
+                    destination: arrivalCode,
+                    departureDate,
+                    returnDate: isRoundTrip ? returnDate : undefined,
+                    adults: passengers,
+                    travelClass,
+                    maxPrice: maxPrice ? parseFloat(maxPrice) : null,
+                    priceType,
+                    isRoundTrip,
+                    max: 20
+                };
+                
+                await this.searchFlights(searchParams);
+            }
+
+            async searchFlights(params) {
+                this.showLoading();
+                this.hideResults();
+                
+                try {
+                    console.log('🔍 Ricerca voli con parametri:', params);
+                    
+                    // Ricerca voli di andata
+                    const outboundFlights = await window.amadeusAPI.searchFlights({
+                        origin: params.origin,
+                        destination: params.destination,
+                        departureDate: params.departureDate,
+                        adults: params.adults,
+                        travelClass: params.travelClass,
+                        max: params.max
+                    });
+                    
+                    let processedFlights = outboundFlights;
+                    
+                    // Se è andata e ritorno, cerca anche i voli di ritorno
+                    if (params.isRoundTrip && params.returnDate) {
+                        console.log('🔄 Ricerca voli di ritorno...');
+                        const returnFlights = await window.amadeusAPI.searchFlights({
+                            origin: params.destination,
+                            destination: params.origin,
+                            departureDate: params.returnDate,
+                            adults: params.adults,
+                            travelClass: params.travelClass,
+                            max: params.max
+                        });
+                        
+                        // Combina i voli di andata e ritorno
+                        processedFlights = this.combineRoundTripFlights(outboundFlights, returnFlights, params);
+                    }
+                    
+                    // Applica filtro prezzo se specificato
+                    if (params.maxPrice) {
+                        processedFlights = this.filterByPrice(processedFlights, params.maxPrice, params.priceType, params.adults, params.isRoundTrip);
+                    }
+                    
+                    this.hideLoading();
+                    this.displayFlights(processedFlights, params);
+                    this.showStatus(`Trovati ${processedFlights.length} voli${params.maxPrice ? ' nel budget' : ''}`, 'success');
+                } catch (error) {
+                    console.error('❌ Errore ricerca voli:', error);
+                    this.hideLoading();
+                    this.showError('Errore nella ricerca voli. Verifica i parametri e riprova.');
+                    this.showStatus('Errore nella ricerca', 'error');
+                }
+            }
+
+            displayFlights(flights, params) {
+                // Update search summary
+                document.getElementById('routeInfo').textContent = `${params.origin} → ${params.destination}`;
+                document.getElementById('dateInfo').textContent = params.returnDate ? 
+                    `${this.formatDate(params.departureDate)} - ${this.formatDate(params.returnDate)}` : 
+                    this.formatDate(params.departureDate);
+                document.getElementById('passengersInfo').textContent = `${params.adults} passeggeri`;
+                
+                if (flights.length === 0) {
+                    this.flightsContainer.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-plane-slash"></i>
+                            <h3>Nessun volo trovato</h3>
+                            <p>Prova a modificare le date o gli aeroporti di ricerca.</p>
+                        </div>
+                    `;
+                } else {
+                    this.flightsContainer.innerHTML = flights.map(flight => this.createFlightCard(flight)).join('');
+                    
+                    // Aggiungi event listeners ai pulsanti hotel
+                    setTimeout(() => {
+                        document.querySelectorAll('.hotel-button').forEach(button => {
+                            button.addEventListener('click', () => {
+                                this.goToHotelsFromButton(button);
+                            });
+                        });
+                    }, 100);
+                }
+                
+                this.showResults();
+            }
+
+            createFlightCard(flight) {
+                const outbound = flight.outbound;
+                const firstSegment = outbound.segments[0];
+                const lastSegment = outbound.segments[outbound.segments.length - 1];
+                
+                // Genera URL per l'acquisto (usando parametri generici)
+                const bookingUrl = this.generateBookingUrl(flight, {
+                    origin: firstSegment.departure.iataCode,
+                    destination: lastSegment.arrival.iataCode,
+                    departureDate: firstSegment.departure.time.toISOString().split('T')[0],
+                    isRoundTrip: flight.isRoundTrip,
+                    returnDate: flight.inbound ? flight.inbound.segments[0].departure.time.toISOString().split('T')[0] : null
+                });
+                
+                // Determina se è un volo di andata e ritorno
+                const isRoundTrip = flight.isRoundTrip && flight.inbound;
+                
+                let returnRouteHtml = '';
+                if (isRoundTrip) {
+                    const returnFirstSegment = flight.inbound.segments[0];
+                    const returnLastSegment = flight.inbound.segments[flight.inbound.segments.length - 1];
+                    
+                    returnRouteHtml = `
+                        <div class="flight-route" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #e1e5e9;">
+                            <div class="airport-info">
+                                <div class="airport-code">${returnFirstSegment.departure.iataCode}</div>
+                                <div class="airport-time">${returnFirstSegment.departure.timeFormatted}</div>
+                            </div>
+                            
+                            <div class="route-arrow">
+                                <i class="fas fa-arrow-left" style="color: #f093fb;"></i>
+                                <small>${flight.inbound.totalStops > 0 ? `${flight.inbound.totalStops} scalo${flight.inbound.totalStops > 1 ? 'i' : ''}` : 'Diretto'}</small>
+                            </div>
+                            
+                            <div class="airport-info">
+                                <div class="airport-code">${returnLastSegment.arrival.iataCode}</div>
+                                <div class="airport-time">${returnLastSegment.arrival.timeFormatted}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Dettagli prezzo per andata e ritorno
+                let priceBreakdown = '';
+                if (isRoundTrip && flight.outboundPrice && flight.returnPrice) {
+                    priceBreakdown = `
+                        <div class="price-breakdown">
+                            <small>Andata: <span class="price-highlight">${flight.outboundPrice.formatted}</span> | 
+                            Ritorno: <span class="price-highlight">${flight.returnPrice.formatted}</span></small>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="flight-card">
+                        <div class="flight-header">
+                            <div>
+                                <div class="flight-price">${flight.price.formatted}
+                                    ${isRoundTrip ? '<span class="total-price-badge">A/R</span>' : ''}
+                                </div>
+                                ${priceBreakdown}
+                            </div>
+                            <div class="airline-info">
+                                <i class="fas fa-plane"></i> ${flight.validatingAirlineCodes.join(', ')}
+                            </div>
+                        </div>
+                        
+                        <div class="flight-route">
+                            <div class="airport-info">
+                                <div class="airport-code">${firstSegment.departure.iataCode}</div>
+                                <div class="airport-time">${firstSegment.departure.timeFormatted}</div>
+                            </div>
+                            
+                            <div class="route-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                                <small>${outbound.totalStops > 0 ? `${outbound.totalStops} scalo${outbound.totalStops > 1 ? 'i' : ''}` : 'Diretto'}</small>
+                            </div>
+                            
+                            <div class="airport-info">
+                                <div class="airport-code">${lastSegment.arrival.iataCode}</div>
+                                <div class="airport-time">${lastSegment.arrival.timeFormatted}</div>
+                            </div>
+                        </div>
+                        
+                        ${returnRouteHtml}
+                        
+                        <div class="flight-details">
+                            <div class="detail-item">
+                                <div class="detail-label">${isRoundTrip ? 'Durata Andata' : 'Durata'}</div>
+                                <div class="detail-value">${window.amadeusAPI.formatDuration(outbound.duration)}</div>
+                            </div>
+                            ${isRoundTrip ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Durata Ritorno</div>
+                                    <div class="detail-value">${window.amadeusAPI.formatDuration(flight.inbound.duration)}</div>
+                                </div>
+                            ` : ''}
+                            <div class="detail-item">
+                                <div class="detail-label">Posti</div>
+                                <div class="detail-value">${flight.numberOfBookableSeats}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Aeromobile</div>
+                                <div class="detail-value">${firstSegment.aircraft || 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flight-actions">
+                            <div class="flight-id">
+                                ID: ${flight.id.substring(0, 8)}... ${isRoundTrip ? '(A/R)' : '(Solo Andata)'}
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button 
+                                    class="hotel-button"
+                                    data-destination="${lastSegment.arrival.iataCode}"
+                                    data-city="${lastSegment.arrival.iataCode}"
+                                    data-checkin="${firstSegment.departure.time.toISOString().split('T')[0]}"
+                                    data-checkout="${isRoundTrip && flight.inbound ? flight.inbound.segments[0].departure.time.toISOString().split('T')[0] : ''}">
+                                    <i class="fas fa-hotel"></i>
+                                    Vedi Hotel
+                                </button>
+                                <a href="${bookingUrl}" target="_blank" class="buy-button" 
+                                   onclick="window.flightApp.trackPurchase('${flight.id}', '${flight.price.total}', '${flight.price.currency}')">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Acquista Biglietto
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            generateBookingUrl(flight, params) {
+                const { origin, destination, departureDate, isRoundTrip, returnDate } = params;
+                const airline = flight.validatingAirlineCodes[0];
+                
+                // Formatta date per URL (rimuove trattini)
+                const depDateFormatted = departureDate.replace(/-/g, '');
+                const retDateFormatted = returnDate ? returnDate.replace(/-/g, '') : '';
+                
+                // URL generici per diversi siti di prenotazione
+                const bookingSites = {
+                    // Skyscanner
+                    skyscanner: isRoundTrip && returnDate ? 
+                        `https://www.skyscanner.it/transport/flights/${origin}/${destination}/${depDateFormatted}/${retDateFormatted}/?adults=1&children=0&adultsv2=1&childrenv2=&infants=0&cabinclass=economy&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false` :
+                        `https://www.skyscanner.it/transport/flights/${origin}/${destination}/${depDateFormatted}/?adults=1&children=0&adultsv2=1&childrenv2=&infants=0&cabinclass=economy&rtn=0&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false`,
+                    
+                    // Kayak
+                    kayak: isRoundTrip && returnDate ?
+                        `https://www.kayak.it/flights/${origin}-${destination}/${departureDate}/${returnDate}?sort=bestflight_a` :
+                        `https://www.kayak.it/flights/${origin}-${destination}/${departureDate}?sort=bestflight_a&fs=stops=0`,
+                    
+                    // Expedia
+                    expedia: isRoundTrip && returnDate ?
+                        `https://www.expedia.it/Flights-Search?trip=roundtrip&leg1=from%3A${origin}%2Cto%3A${destination}%2Cdeparture%3A${departureDate}TANYT&leg2=from%3A${destination}%2Cto%3A${origin}%2Cdeparture%3A${returnDate}TANYT&passengers=adults%3A1%2Cchildren%3A0%2Cinfants%3A0&options=cabinclass%3Aeconomy&mode=search` :
+                        `https://www.expedia.it/Flights-Search?trip=oneway&leg1=from%3A${origin}%2Cto%3A${destination}%2Cdeparture%3A${departureDate}TANYT&passengers=adults%3A1%2Cchildren%3A0%2Cinfants%3A0&options=cabinclass%3Aeconomy&mode=search`,
+                    
+                    // Momondo
+                    momondo: isRoundTrip && returnDate ?
+                        `https://www.momondo.it/flights/${origin}/${destination}/${departureDate}/${returnDate}?adults=1&children=0&infants=0&cabinClass=economy&sort=bestflight_a` :
+                        `https://www.momondo.it/flights/${origin}/${destination}/${departureDate}?adults=1&children=0&infants=0&cabinClass=economy&sort=bestflight_a`
+                };
+                
+                // Scegli il sito in base alla compagnia o usa Skyscanner come default
+                const defaultSite = 'skyscanner';
+                return bookingSites[defaultSite];
+            }
+
+            showLoading() {
+                this.loadingDiv.classList.remove('hidden');
+                document.getElementById('searchButton').disabled = true;
+            }
+
+            hideLoading() {
+                this.loadingDiv.classList.add('hidden');
+                document.getElementById('searchButton').disabled = false;
+            }
+
+            showResults() {
+                this.resultsDiv.classList.remove('hidden');
+                this.resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            hideResults() {
+                this.resultsDiv.classList.add('hidden');
+            }
+
+            showError(message) {
+                this.flightsContainer.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Errore</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+                this.showResults();
+            }
+
+            formatDate(dateString) {
+                return new Date(dateString).toLocaleDateString('it-IT', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+
+            showStatus(message, type) {
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+                
+                text.textContent = message;
+                indicator.className = `status-indicator ${type}`;
+                indicator.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    indicator.classList.add('hidden');
+                }, 4000);
+            }
+            
+            combineRoundTripFlights(outboundFlights, returnFlights, params) {
+                const combinedFlights = [];
+                
+                // Combina ogni volo di andata con ogni volo di ritorno (massimo 50 combinazioni)
+                let combinationCount = 0;
+                const maxCombinations = 50;
+                
+                for (const outbound of outboundFlights.slice(0, 10)) {
+                    for (const returnFlight of returnFlights.slice(0, 5)) {
+                        if (combinationCount >= maxCombinations) break;
+                        
+                        const totalPrice = parseFloat(outbound.price.total) + parseFloat(returnFlight.price.total);
+                        
+                        const combinedFlight = {
+                            ...outbound,
+                            id: `RT_${outbound.id}_${returnFlight.id}`,
+                            price: {
+                                total: totalPrice,
+                                currency: outbound.price.currency,
+                                formatted: `${totalPrice.toFixed(2)} ${outbound.price.currency}`
+                            },
+                            outbound: outbound.outbound,
+                            inbound: returnFlight.outbound, // Il volo di "ritorno" è l'outbound del returnFlight
+                            isRoundTrip: true,
+                            outboundPrice: outbound.price,
+                            returnPrice: returnFlight.price
+                        };
+                        
+                        combinedFlights.push(combinedFlight);
+                        combinationCount++;
+                    }
+                    if (combinationCount >= maxCombinations) break;
+                }
+                
+                // Ordina per prezzo totale
+                return combinedFlights.sort((a, b) => a.price.total - b.price.total);
+            }
+            
+            filterByPrice(flights, maxPrice, priceType, adults, isRoundTrip) {
+                return flights.filter(flight => {
+                    let priceToCheck = flight.price.total;
+                    
+                    // Logica corretta del filtro prezzo:
+                    // - "per_person": confronta prezzo totale volo con limite per persona (limite si applica per ogni passeggero)
+                    // - "total": confronta prezzo totale volo con limite totale (limite si applica a tutto il gruppo)
+                    
+                    if (priceType === 'per_person') {
+                        // Il prezzo del volo è già per tutti i passeggeri, quindi dividiamo per il numero di adulti
+                        priceToCheck = priceToCheck / adults;
+                    }
+                    // Se priceType === 'total', usiamo priceToCheck così com'è (prezzo totale del volo)
+                    
+                    console.log(`💰 Filtro prezzo: Volo ${flight.id.substring(0, 8)} - Prezzo: ${flight.price.total} ${flight.price.currency}, Limite: ${maxPrice}, Tipo: ${priceType}, Prezzo controllo: ${priceToCheck.toFixed(2)}, Passeggeri: ${adults}`);
+                    
+                    return priceToCheck <= maxPrice;
+                });
+            }
+            
+            goToHotelsFromButton(button) {
+                // Leggi dati dal pulsante
+                const destinationCode = button.dataset.destination;
+                const checkInDate = button.dataset.checkin;
+                let checkOutDate = button.dataset.checkout;
+                
+                // Ottieni numero ospiti dal form
+                const guests = document.getElementById('passengers').value;
+                
+                // Chiama la funzione principale
+                this.goToHotels(destinationCode, checkInDate, checkOutDate, guests);
+            }
+            
+            
+            trackPurchase(flightId, price, currency) {
+                console.log('🛒 Click acquisto volo:', {
+                    flightId,
+                    price,
+                    currency,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Mostra notifica
+                this.showStatus(`Reindirizzamento a sito acquisto per volo ${flightId.substring(0, 8)}...`, 'success');
+                
+                // Qui potresti aggiungere analytics o tracking
+                // gtag('event', 'purchase_click', { flight_id: flightId, price: price });
+            }
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.flightApp = new FlightSearchApp();
+        });
+    </script>
+</body>
+</html>
